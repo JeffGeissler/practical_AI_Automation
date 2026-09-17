@@ -54,3 +54,7 @@ Contributions are welcome! Please feel free to submit pull requests or open issu
 ## License
 
 To be determined
+
+## Local AI application planning
+
+See [the planning index](docs/README.md) for the proposed AI Chief of Staff and Organizer applications, shared architecture, decisions, and model evaluation plan. This work is documentation only; the existing Shortcuts prototype is preserved. The new applications require local-only inference and the security boundaries described in those plans.
