@@ -7,11 +7,14 @@ Status: proposed architecture; documentation-only phase, 2026-09-17. No applicat
 | [Shared architecture](SHARED_ARCHITECTURE.md) | Boundaries, security, data, jobs, inference and app behavior |
 | [Decisions](DECISIONS.md) | Evidence, choices, assumptions, unresolved gates |
 | [Model evaluation](MODEL_EVALUATION.md) | Verified inventory and proposed evaluation protocol |
+| [Chief of Staff PRD](chief-of-staff/PRD.md) | Concept claim audit, practical MVP, CS requirements and acceptance criteria |
+| [Chief of Staff design](chief-of-staff/DESIGN.md) | Screens, data/time semantics, authorization, jobs and integration contracts |
+| [Chief of Staff implementation plan](chief-of-staff/IMPLEMENTATION_PLAN.md) | Deterministic first release, ordered PRs, optional AI and integration gates |
 | [Agent instructions](../AGENTS.md) | Scope and future contributor rules |
 
 ## Source precedence and evidence
 
-Current explicit user instructions govern scope. Existing applicable repository instructions follow; none were found in this workspace or checked ancestor instruction files. For implementation claims, inspected code and reproducible tests outrank README/concept claims. Official dated vendor sources inform compatibility but do not substitute for testing this machine. Proposed requirements describe future behavior, not existing functionality. Record conflicts in [Decisions](DECISIONS.md), rather than silently treating a concept as implemented.
+Current explicit user instructions govern scope, followed by applicable [AGENTS.md](../AGENTS.md). The initial inspection found no pre-existing instruction file; AGENTS.md was subsequently added with the shared plans. For implementation claims, inspected code and reproducible tests outrank README/concept claims. Official dated vendor sources inform compatibility but do not substitute for testing this machine. Proposed requirements describe future behavior, not existing functionality. The user-supplied March 27, 2026 Chief of Staff v2.0 concept is reconciled in the [claim audit](chief-of-staff/PRD.md#concept-translation-and-claim-audit). Record conflicts in [Decisions](DECISIONS.md), rather than silently treating a concept as implemented.
 
 These plans were originally prepared in a multi-project workspace whose root and Organizer prototype were not Git repositories. At the user’s request, they are now maintained in the dedicated `practical_AI_Automation` Git repository. Its existing FastAPI/Shortcuts prototype is preserved; the proposed two-app architecture is not implemented. Historical workspace observations remain in [Decisions](DECISIONS.md#inspection-record).
 
@@ -36,7 +39,7 @@ IDs are stable; retire rather than renumber them. The criteria below are future 
 
 ## Milestones and review
 
-1. **M0 — this phase:** review these five Markdown files and evidence; no build authorization implied.
+1. **M0 — this phase:** review shared and app-specific planning Markdown and evidence; no build authorization implied. Drafting was local-only; the subsequent user request authorizes publishing this documentation revision to GitHub.
 2. **M1 — deterministic foundation:** after explicit build instruction, use this dedicated repository, pin a tested Python/dependency set, establish private state paths and browser security; deliver manual Chief of Staff CRUD and deterministic briefing.
 3. **M2 — safe Organizer:** selected-root inventory, extension rules, duplicate candidates, preview and explicitly approved operations; fault recovery and job tests before personal-folder use.
 4. **M3 — optional AI:** broker/provider, synthetic A18 evaluation, validated proposals, joint-app concurrency and recovery tests. Enable only passing workflows. M1/M2 remain useful if M3 fails.

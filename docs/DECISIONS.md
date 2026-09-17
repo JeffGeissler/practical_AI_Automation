@@ -67,3 +67,17 @@ The user subsequently authorized a local checkout and push to [JeffGeissler/prac
 The existing code defines FastAPI POST `/execute`, dispatches `log_fitness`, and returns a success message from the supplied meal name. It does not persist meals or implement the proposed apps, authentication, CSRF protection, inference or filesystem automation. Requirements list unpinned FastAPI, Uvicorn, Requests and Pydantic. The existing README describes broader Shortcuts/local-or-cloud automation; that concept does not override the new apps’ local-only inference and browser security requirements. Reuse the existing FastAPI direction while keeping this prototype unchanged; decide any migration explicitly during M1.
 
 Only planning Markdown and a navigation link are changed for publication. The original workspace copies are historical snapshots; this repository is the maintained planning source. Local clone/commit/push are authorized by the follow-up request, while application implementation remains documentation-only until explicitly requested.
+
+## Chief of Staff concept refinement
+
+The subsequent user request restricts this revision to **local documentation with no external mutations**; the earlier publication authorization does not authorize another push for this revision. Read the supplied March 27, 2026 v2.0 concept as vision, with the current MVP constraints taking precedence. Its checked-off dashboard, CRUD, AI briefings, HC Audit and Start Ollama claims have no supporting implementation in this checkout. Scoped workspace search found only the small Organizer tag/rule helpers, not the claimed integrated file tagger or HC Automation module. See the full [claim audit](chief-of-staff/PRD.md#concept-translation-and-claim-audit).
+
+| ID / requirements | Refinement | Rationale / deferred alternative |
+| --- | --- | --- |
+| D-10 / CS-01–CS-05, R-02 | First usable release is manual CRUD, Today and factual briefings, including notes/preferences and explicit time semantics. | Preserve planning purpose without an inference dependency; concept's completed-foundation and week estimates remain unverified. |
+| D-11 / CS-06–CS-09, R-07/R-11 | Compiled workflow registry plus durable jobs replaces dynamic spawning, instance tables and message bus. Routine user Save is sufficient approval; proposals and sensitive operations use scoped review. | Avoid continuous agents, repeated confirmation dialogs and model-derived authority. |
+| D-12 / CS-12, R-03 | Chief can request Organizer previews only; execution approval/journal stays in Organizer. | Single owner of filesystem effects makes lost-response recovery tractable and avoids duplicated moves. |
+
+New CS requirement IDs and C1–C4 milestones refine the existing R IDs/M milestones without renumbering them. No implementation, runtime evaluation or benchmark was performed for this revision. Remaining integration gates concern actual HC Audit/file-tagger source, Organizer readiness and A18 model qualification; they do not block the deterministic first release.
+
+After the local documentation review, the user explicitly requested a GitHub push of this revision. That follow-up authorizes its commit and publication, without authorizing application implementation or runtime changes.
