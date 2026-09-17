@@ -1,10 +1,10 @@
-# practical_iOS_auto
+# practical_AI_Automation
 
 Practical iOS automation framework for building powerful workflows without publishing to the App Store. This project enables iOS users to create sophisticated automation by combining Apple Shortcuts with a Python backend service.
 
 ## Overview
 
-**practical_iOS_auto** is a distributed automation system that leverages Apple's Shortcuts app to trigger custom logic running on a Python service. Instead of being limited to App Store distribution, this approach provides flexibility to run custom automation workflows locally or in the cloud.
+**practical_AI_auto** is a distributed automation system that leverages Apple's Shortcuts app to trigger custom logic running on a Python service. Instead of being limited to App Store distribution, this approach provides flexibility to run custom automation workflows locally or in the cloud.
 
 ## Architecture
 
