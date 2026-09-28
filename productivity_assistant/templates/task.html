@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf, status_button, task_fields %}
+{% block title %}{{ task.title }}{% endblock %}
+{% block content %}
+<h1 class="{{ 'done' if task.status == 'done' }}">{{ task.title }}</h1>
+<p>{{ status_button(task, "/tasks/" ~ task.id) }}
+  <span class="muted">Source: {{ task.source }} · created {{ task.created_at }}</span></p>
+
+<form class="stack" method="post" action="/tasks/{{ task.id }}">
+  {{ csrf() }}
+  {{ task_fields(task, projects) }}
+  <p><button class="primary">Save changes</button></p>
+</form>
+
+<h2>Waiting on</h2>
+<ul>
+  {% for other in links.blocked_by %}
+  <li><a class="{{ 'done' if other.status == 'done' }}" href="/tasks/{{ other.id }}">{{ other.title }}</a>
+    <form class="inline" method="post" action="/tasks/{{ task.id }}/dependencies/{{ other.id }}/delete">{{ csrf() }}<button>Remove</button></form></li>
+  {% else %}<li class="muted">Nothing</li>{% endfor %}
+</ul>
+{% if candidates %}
+<form method="post" action="/tasks/{{ task.id }}/dependencies">
+  {{ csrf() }}
+  <label for="blocked_by_id">Add a task this one waits on</label>
+  <select id="blocked_by_id" name="blocked_by_id">
+    {% for other in candidates %}<option value="{{ other.id }}">{{ other.title }}</option>{% endfor %}
+  </select>
+  <button>Add</button>
+</form>
+{% endif %}
+{% if links.blocks %}
+<h2>Blocks</h2>
+<ul>{% for other in links.blocks %}<li><a href="/tasks/{{ other.id }}">{{ other.title }}</a></li>{% endfor %}</ul>
+{% endif %}
+
+<h2>History</h2>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>When (UTC)</th><th>By</th><th>What</th><th>Changes</th></tr></thead>
+  <tbody>
+  {% for entry in history %}
+  <tr><td>{{ entry.at }}</td><td>{{ entry.actor }}</td><td>{{ entry.action }}</td>
+    <td class="muted">{% for field, change in entry.changes.items() %}{{ field }}: {{ change }}{% if not loop.last %}; {% endif %}{% endfor %}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<h2>Delete</h2>
+<form method="post" action="/tasks/{{ task.id }}/delete">
+  {{ csrf() }}<button>Delete this task</button>
+  <span class="muted">It disappears from lists; its history is kept.</span>
+</form>
+{% endblock %}

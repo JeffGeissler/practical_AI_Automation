@@ -1,5 +1,23 @@
 {% extends "base.html" %}
+{% from "_macros.html" import csrf, status_button %}
 {% block content %}
 <h1>Today, {{ now.strftime("%A %-d %B") }}</h1>
-<p>Nothing here yet.</p>
+<form class="stack" method="post" action="/tasks">
+  {{ csrf() }}<input type="hidden" name="next" value="/">
+  <label for="quick">Add a task</label>
+  <input type="text" id="quick" name="title" maxlength="200" required placeholder="What needs doing?">
+  <button class="primary">Add</button>
+</form>
+<h2>Open tasks</h2>
+{% if tasks %}
+<ul>
+  {% for task in tasks %}
+  <li>{{ status_button(task, "/") }} <a href="/tasks/{{ task.id }}">{{ task.title }}</a>
+    <span class="muted">{% if task.due_date %}due {{ task.due_date }}{% endif %}
+    {% if task.project_name %}· {{ task.project_name }}{% endif %}</span></li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="muted">Nothing open. Add a task above.</p>
+{% endif %}
 {% endblock %}

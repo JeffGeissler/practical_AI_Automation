@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<h1>Settings</h1>
+<p class="muted">Data folder: {{ data_dir }}</p>
+
+<h2>Export</h2>
+<p><a href="/api/export?format=json">Everything as JSON</a> · <a href="/api/export?format=csv">Tasks as CSV</a></p>
+
+<h2>Backups</h2>
+<form method="post" action="/settings/backup">{{ csrf() }}<button>Back up now</button></form>
+<p class="muted">The newest 14 are kept. To restore, stop the app and run
+  <code>productivity-assistant restore &lt;backup file&gt;</code>.</p>
+<ul>
+  {% for backup in backups %}<li>{{ backup.name }}</li>{% else %}<li class="muted">No backups yet.</li>{% endfor %}
+</ul>
+{% endblock %}

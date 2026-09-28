@@ -27,12 +27,16 @@ include = ["productivity_assistant*"]
 productivity_assistant = ["migrations/*.sql", "templates/*.html", "static/*"]
 
 [tool.ruff]
-line-length = 110
+line-length = 120
 target-version = "py39"
 include = ["productivity_assistant/**/*.py", "tests/**/*.py"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.ruff.lint]
+# Explicit so personal ruff configs do not change CI results.
+select = ["E", "F", "W", "B"]
 
 [tool.ruff.lint.flake8-bugbear]
 extend-immutable-calls = ["fastapi.Depends", "fastapi.Form", "fastapi.Query"]

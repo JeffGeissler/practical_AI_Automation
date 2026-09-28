@@ -4,12 +4,15 @@ from datetime import datetime
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from pydantic import ValidationError
 
 from .config import Settings, load_settings, prepare
 from .db import connect, migrate
 from .security import LocalGuard, csrf_token, require_csrf
+from .tasks import InputError, NotFound
 
 HERE = Path(__file__).parent
 templates = Jinja2Templates(directory=str(HERE / "templates"))
@@ -24,12 +27,26 @@ def get_db(request: Request):
         yield connection
 
 
+def now(request: Request) -> datetime:
+    return request.app.state.clock()
+
+
 def render(request: Request, name: str, status_code: int = 200, **context):
-    context.update(csrf_token=csrf_token(request), now=request.app.state.clock())
+    context.update(csrf_token=csrf_token(request), now=now(request))
     return templates.TemplateResponse(request, name, context, status_code=status_code)
 
 
+def describe(error: Exception) -> str:
+    if isinstance(error, ValidationError):
+        first = error.errors()[0]
+        field = ".".join(str(part) for part in first["loc"]) or "input"
+        return f"{field.replace('_', ' ')}: {first['msg']}"
+    return str(error)
+
+
 def create_app(settings: Settings = None, clock=local_now) -> FastAPI:
+    from . import api, pages
+
     settings = settings or load_settings()
     secret = prepare(settings)
     with closing(connect(settings.database)) as connection:
@@ -38,26 +55,19 @@ def create_app(settings: Settings = None, clock=local_now) -> FastAPI:
     app.state.settings, app.state.secret, app.state.clock = settings, secret, clock
     app.add_middleware(LocalGuard, port=settings.port)
     app.mount("/static", StaticFiles(directory=str(HERE / "static")), name="static")
+    app.include_router(api.router, prefix="/api")
+    app.include_router(pages.router)
+
+    @app.exception_handler(InputError)
+    def input_error(request, error):
+        return JSONResponse({"detail": str(error)}, status_code=400)
+
+    @app.exception_handler(NotFound)
+    def not_found(request, error):
+        return JSONResponse({"detail": str(error)}, status_code=404)
 
     @app.get("/healthz")
     def health():
         return {"status": "ok"}
-
-    @app.get("/api/csrf")
-    def csrf(request: Request):
-        """Token for API clients on this Mac; other sites cannot read it (no CORS)."""
-        return {"csrf_token": csrf_token(request)}
-
-    @app.get("/")
-    def today(request: Request):
-        return render(request, "today.html")
-
-    @app.put("/api/settings/{key}")
-    def put_setting(key: str, body: dict, connection=Depends(get_db)):
-        value = str(body.get("value", ""))
-        with connection:
-            connection.execute("INSERT INTO settings VALUES (?, ?) "
-                               "ON CONFLICT(key) DO UPDATE SET value = excluded.value", (key, value))
-        return {"key": key, "value": value}
 
     return app
