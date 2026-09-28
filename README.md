@@ -1,60 +1,45 @@
 # practical_AI_Automation
 
-Practical iOS automation framework for building powerful workflows without publishing to the App Store. This project enables iOS users to create sophisticated automation by combining Apple Shortcuts with a Python backend service.
+Personal automation and AI assistant projects that run on your own Mac.
 
-## Overview
+## What's here
 
-**practical_AI_auto** is a distributed automation system that leverages Apple's Shortcuts app to trigger custom logic running on a Python service. Instead of being limited to App Store distribution, this approach provides flexibility to run custom automation workflows locally or in the cloud.
+| Part | Status | Where |
+| --- | --- | --- |
+| **Productivity Assistant** | Design proposal, not yet built | [Design](docs/ARCHITECTURE.md) |
+| **Planning for local AI apps** (Chief of Staff, Organizer) | Planning documents | [Planning index](docs/README.md) |
+| **Shortcuts automation prototype** | Small working prototype | `api/`, `handlers/` |
 
-## Architecture
+### Productivity Assistant
 
-The system follows a modular, layered architecture:
+A task and planning assistant: plain-language capture, a transparent prioritized
+list, morning briefings and evening reviews, document search, and read-only
+imports from Jira, Confluence and MS Project. It is local by default. AI only
+proposes and you confirm, and every feature works without AI. A cloud model is an
+optional, per-request opt-in, with the provider still to be chosen. See the
+[design](docs/ARCHITECTURE.md) for architecture, principles, data, security,
+roadmap and open decisions.
+
+### Shortcuts automation prototype
+
+An Apple Shortcut sends an HTTP request to a small Python service, which runs a
+handler and returns JSON:
 
 ```
-Apple Shortcut
-    ↓ (HTTP request)
-curl / HTTP Client
-    ↓
-Python Service (Local or Cloud)
-    ↓
-Handler (Modular Logic)
-    ↓
-Output Options
-    ├── GitHub (repo updates, issues, PRs)
-    ├── JSON (structured data)
-    └── Notifications (alerts, messages)
+Apple Shortcut → HTTP request → FastAPI service → handler → JSON response
 ```
 
-### Components
+The service (`api/main.py`) exposes `POST /execute`, taking an `action` and a
+`payload`. The one handler today is `log_fitness` (`handlers/fitness.py`), which
+returns a confirmation for a meal. Dependencies are listed in `requirements.txt`.
+Setup and run instructions will be added once they have been verified.
 
-- **Apple Shortcut**: Entry point triggering the automation workflow
-- **HTTP Client (curl)**: Sends requests from the Shortcut to the backend service
-- **Python Service**: Backend processing layer (can run locally or on cloud infrastructure)
-- **Handler**: Modular business logic processing requests and orchestrating workflows
-- **Output**: Flexible output destinations including GitHub integration, JSON exports, and system notifications
+## Status
 
-## Requirements
-
-- iOS device with Shortcuts app
-- Python 3.8+
-- HTTP connectivity between iOS device and Python service
-
-## Getting Started
-
-*(Project setup instructions coming soon)*
-
-## Usage
-
-*(Usage examples and documentation coming soon)*
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit pull requests or open issues for bugs and feature requests.
+The Productivity Assistant and the planned local AI apps are documentation only.
+Nothing in this repository stores personal data; keep databases, documents, logs
+and secrets outside it.
 
 ## License
 
-To be determined
-
-## Local AI application planning
-
-See [the planning index](docs/README.md) for the proposed AI Chief of Staff and Organizer applications, shared architecture, decisions, and model evaluation plan. This work is documentation only; the existing Shortcuts prototype is preserved. The new applications require local-only inference and the security boundaries described in those plans.
+To be determined.
