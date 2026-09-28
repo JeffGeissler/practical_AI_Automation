@@ -1,13 +1,14 @@
 """JSON API. Pydantic validates requests; services own every change."""
 import json
+from datetime import date
 from typing import Literal, Optional
 
 from fastapi import APIRouter, Depends, Request, Response
 from pydantic import BaseModel
 
-from . import storage, tasks
+from . import priorities, storage, tasks
 from .security import csrf_token
-from .web import get_db, now
+from .web import get_db, now, today
 
 router = APIRouter()
 
@@ -22,13 +23,36 @@ def csrf(request: Request):
     return {"csrf_token": csrf_token(request)}
 
 
-@router.put("/settings/{key}")
-def put_setting(key: str, body: dict, connection=Depends(get_db)):
-    value = str(body.get("value", ""))
-    with connection:
-        connection.execute("INSERT INTO settings VALUES (?, ?) "
-                           "ON CONFLICT(key) DO UPDATE SET value = excluded.value", (key, value))
-    return {"key": key, "value": value}
+@router.get("/settings")
+def get_settings(connection=Depends(get_db)):
+    return {"priority_weights": priorities.get_weights(connection)}
+
+
+@router.put("/settings/priority-weights")
+def put_weights(body: priorities.Weights, connection=Depends(get_db)):
+    priorities.set_weights(connection, body)
+    return priorities.get_weights(connection)
+
+
+@router.get("/priorities")
+def ranked(request: Request, connection=Depends(get_db)):
+    return priorities.rank(connection, today(request))
+
+
+@router.post("/priorities/{task_id}/override")
+def override(task_id: int, body: priorities.OverrideIn, request: Request, connection=Depends(get_db)):
+    priorities.set_override(connection, task_id, body.kind, today(request), now(request))
+    return priorities.rank(connection, today(request))
+
+
+class SnoozeIn(BaseModel):
+    until: date
+
+
+@router.post("/tasks/{task_id}/snooze")
+def snooze(task_id: int, body: SnoozeIn, request: Request, connection=Depends(get_db)):
+    priorities.snooze(connection, task_id, body.until, today(request), now(request))
+    return task_json(connection, task_id)
 
 
 def task_json(connection, task_id):

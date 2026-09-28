@@ -11,6 +11,8 @@ from productivity_assistant.web import create_app
 
 from .conftest import BASE
 
+WEIGHTS = "/api/settings/priority-weights"
+
 
 def test_starts_and_serves_today(client):
     assert client.get("/healthz").json() == {"status": "ok"}
@@ -57,14 +59,14 @@ def test_unknown_host_is_rejected(client):
     {"sec-fetch-site": "same-site"},
 ])
 def test_cross_site_change_is_rejected(client, headers):
-    response = client.put("/api/settings/theme", json={"value": "dark"}, headers=headers)
+    response = client.put(WEIGHTS, json={"due": 2}, headers=headers)
     assert response.status_code == 403
 
 
 def test_change_requires_csrf_token(client):
     del client.headers["x-csrf-token"]
-    assert client.put("/api/settings/theme", json={"value": "dark"}).status_code == 403
-    assert client.put("/api/settings/theme", json={"value": "dark"},
+    assert client.put(WEIGHTS, json={"due": 2}).status_code == 403
+    assert client.put(WEIGHTS, json={"due": 2},
                       headers={"x-csrf-token": "0" * 64}).status_code == 403
 
 
@@ -72,10 +74,10 @@ def test_csrf_token_is_bound_to_session(client, settings, clock):
     with TestClient(create_app(settings, clock=clock), base_url=BASE) as other:
         other.get("/")
         stolen = client.headers["x-csrf-token"]
-        assert other.put("/api/settings/theme", json={"value": "x"},
+        assert other.put(WEIGHTS, json={"due": 2},
                          headers={"x-csrf-token": stolen}).status_code == 403
 
 
 def test_same_origin_change_succeeds(client):
-    response = client.put("/api/settings/theme", json={"value": "dark"}, headers={"origin": BASE})
+    response = client.put(WEIGHTS, json={"due": 2}, headers={"origin": BASE})
     assert response.status_code == 200

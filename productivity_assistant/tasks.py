@@ -5,7 +5,7 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
-EDITABLE = ("title", "notes", "due_date", "importance", "effort_minutes", "project_id", "status")
+EDITABLE = ("title", "notes", "due_date", "importance", "effort_minutes", "project_id", "status", "snoozed_until")
 REQUIRED = ("title", "notes", "importance", "status")
 
 
@@ -39,6 +39,7 @@ class TaskPatch(_Strict):
     effort_minutes: Optional[int] = Field(None, ge=1, le=10080)
     project_id: Optional[int] = None
     status: Optional[Literal["open", "done"]] = None
+    snoozed_until: Optional[date] = None
 
 
 class ProjectIn(_Strict):

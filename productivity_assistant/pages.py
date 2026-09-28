@@ -5,8 +5,10 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
 
-from . import storage, tasks
-from .web import describe, get_db, now, render
+from datetime import timedelta
+
+from . import priorities, storage, tasks
+from .web import describe, get_db, now, render, today
 
 router = APIRouter()
 FAILURES = (ValidationError, tasks.InputError)
@@ -32,13 +34,27 @@ def task_fields(form) -> dict:
     return data
 
 
-def today_context(connection, request):
-    return {"tasks": tasks.list_tasks(connection), "projects": tasks.list_projects(connection)}
-
-
 @router.get("/")
-def today(request: Request, connection=Depends(get_db)):
-    return render(request, "today.html", **today_context(connection, request))
+def today_page(request: Request, connection=Depends(get_db)):
+    return render(request, "today.html", ranked=priorities.rank(connection, today(request)))
+
+
+@router.post("/priorities/{task_id}")
+async def override(task_id: int, request: Request, connection=Depends(get_db)):
+    form = await request.form()
+    try:
+        kind = priorities.OverrideIn(kind=form.get("kind")).kind
+        priorities.set_override(connection, task_id, kind, today(request), now(request))
+    except FAILURES as error:
+        return render(request, "today.html", 400, error=describe(error),
+                      ranked=priorities.rank(connection, today(request)))
+    return redirect("/")
+
+
+@router.post("/tasks/{task_id}/snooze")
+def snooze(task_id: int, request: Request, connection=Depends(get_db)):
+    priorities.snooze(connection, task_id, today(request) + timedelta(days=1), today(request), now(request))
+    return redirect("/")
 
 
 def tasks_context(connection, status="open", project_id=None):
@@ -136,14 +152,27 @@ async def create_project(request: Request, connection=Depends(get_db)):
     return redirect("/projects")
 
 
-def settings_context(request):
+def settings_context(request, connection):
     return {"backups": storage.list_backups(request.app.state.settings.backup_dir),
-            "data_dir": request.app.state.settings.data_dir}
+            "data_dir": request.app.state.settings.data_dir, "weights": priorities.get_weights(connection),
+            "defaults": priorities.DEFAULT_WEIGHTS}
 
 
 @router.get("/settings")
-def settings_page(request: Request):
-    return render(request, "settings.html", **settings_context(request))
+def settings_page(request: Request, connection=Depends(get_db)):
+    return render(request, "settings.html", **settings_context(request, connection))
+
+
+@router.post("/settings/weights")
+async def save_weights(request: Request, connection=Depends(get_db)):
+    form = await request.form()
+    try:
+        values = {factor: form.get(factor) for factor in priorities.FACTORS}
+        weights = priorities.Weights() if form.get("reset") else priorities.Weights(**values)
+        priorities.set_weights(connection, weights)
+    except FAILURES as error:
+        return render(request, "settings.html", 400, error=describe(error), **settings_context(request, connection))
+    return redirect("/settings")
 
 
 @router.post("/settings/backup")
@@ -151,5 +180,5 @@ def backup_now(request: Request, connection=Depends(get_db)):
     try:
         storage.backup(connection, request.app.state.settings.backup_dir, now(request))
     except tasks.InputError as error:
-        return render(request, "settings.html", 400, error=str(error), **settings_context(request))
+        return render(request, "settings.html", 400, error=str(error), **settings_context(request, connection))
     return redirect("/settings")

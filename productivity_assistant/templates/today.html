@@ -1,22 +1,38 @@
 {% extends "base.html" %}
 {% from "_macros.html" import csrf, status_button %}
+{% macro override_button(entry, kind, label) %}
+<form class="inline" method="post" action="/priorities/{{ entry.id }}">{{ csrf() }}
+  <input type="hidden" name="kind" value="{{ kind }}"><button aria-label="{{ label }}: {{ entry.title }}">{{ label }}</button></form>
+{% endmacro %}
 {% block content %}
 <h1>Today, {{ now.strftime("%A %-d %B") }}</h1>
+{% block briefing %}{% endblock %}
 <form class="stack" method="post" action="/tasks">
   {{ csrf() }}<input type="hidden" name="next" value="/">
   <label for="quick">Add a task</label>
   <input type="text" id="quick" name="title" maxlength="200" required placeholder="What needs doing?">
   <button class="primary">Add</button>
 </form>
-<h2>Open tasks</h2>
-{% if tasks %}
-<ul>
-  {% for task in tasks %}
-  <li>{{ status_button(task, "/") }} <a href="/tasks/{{ task.id }}">{{ task.title }}</a>
-    <span class="muted">{% if task.due_date %}due {{ task.due_date }}{% endif %}
-    {% if task.project_name %}· {{ task.project_name }}{% endif %}</span></li>
+<h2>Priorities</h2>
+{% if ranked %}
+<ol>
+  {% for entry in ranked %}
+  <li>
+    <a href="/tasks/{{ entry.id }}" class="{{ 'pin' if entry.pinned }}">{{ entry.title }}</a>
+    <span class="muted">score {{ entry.score }}{% if entry.pinned %} · pinned{% endif %}{% if entry.task.project_name %} · {{ entry.task.project_name }}{% endif %}</span>
+    <div class="reasons">
+      {% for reason in entry.reasons %}{{ reason.label }} ({{ "%+g"|format(reason.points) }}){% if not loop.last %}; {% endif %}{% else %}No factors yet{% endfor %}
+    </div>
+    <div>
+      {{ status_button(entry.task, "/") }}
+      {% if entry.pinned %}{{ override_button(entry, "clear", "Unpin") }}{% else %}{{ override_button(entry, "pin", "Pin") }}{% endif %}
+      {% if entry.task.override in ("raise", "lower") %}{{ override_button(entry, "clear", "Reset") }}
+      {% elif not entry.pinned %}{{ override_button(entry, "raise", "Up") }}{{ override_button(entry, "lower", "Down") }}{% endif %}
+      <form class="inline" method="post" action="/tasks/{{ entry.id }}/snooze">{{ csrf() }}<button aria-label="Snooze {{ entry.title }} until tomorrow">Snooze</button></form>
+    </div>
+  </li>
   {% endfor %}
-</ul>
+</ol>
 {% else %}
 <p class="muted">Nothing open. Add a task above.</p>
 {% endif %}

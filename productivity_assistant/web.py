@@ -31,6 +31,10 @@ def now(request: Request) -> datetime:
     return request.app.state.clock()
 
 
+def today(request: Request):
+    return now(request).date()
+
+
 def render(request: Request, name: str, status_code: int = 200, **context):
     context.update(csrf_token=csrf_token(request), now=now(request))
     return templates.TemplateResponse(request, name, context, status_code=status_code)
