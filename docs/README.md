@@ -5,6 +5,7 @@ Status: proposed architecture; documentation-only phase, 2026-09-17. No applicat
 | Document | Purpose |
 | --- | --- |
 | [Productivity Assistant design](ARCHITECTURE.md) | Proposed task and planning assistant: principles, architecture, AI gateway, data, security, roadmap |
+| [Productivity Assistant implementation plan](PRODUCTIVITY_IMPLEMENTATION_PLAN.md) | Milestones M0–M10, token budget, runtime AI limits, decisions needed |
 | [Shared architecture](SHARED_ARCHITECTURE.md) | Boundaries, security, data, jobs, inference and app behavior |
 | [Decisions](DECISIONS.md) | Evidence, choices, assumptions, unresolved gates |
 | [Model evaluation](MODEL_EVALUATION.md) | Verified inventory and proposed evaluation protocol |
