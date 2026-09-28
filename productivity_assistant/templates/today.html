@@ -1,12 +1,23 @@
 {% extends "base.html" %}
 {% from "_macros.html" import csrf, status_button %}
+{% from "_briefing.html" import items %}
 {% macro override_button(entry, kind, label) %}
 <form class="inline" method="post" action="/priorities/{{ entry.id }}">{{ csrf() }}
   <input type="hidden" name="kind" value="{{ kind }}"><button aria-label="{{ label }}: {{ entry.title }}">{{ label }}</button></form>
 {% endmacro %}
 {% block content %}
 <h1>Today, {{ now.strftime("%A %-d %B") }}</h1>
-{% block briefing %}{% endblock %}
+<section aria-labelledby="briefing-heading">
+  <h2 id="briefing-heading">Morning briefing</h2>
+  {% if briefing %}
+  {% set c = briefing.content %}
+  <p class="muted">{{ c.open_count }} open · generated {{ briefing.generated_at }} UTC ({{ briefing.trigger|replace("_", "-") }})</p>
+  {{ items("Overdue", c.overdue) }}{{ items("Due today", c.due_today) }}
+  {{ items("Top " ~ c.top|length, c.top, True) }}{{ items("Waiting on something", c.waiting) }}
+  {{ items("Finished yesterday", c.completed_yesterday) }}
+  {% else %}<p class="muted">No briefing yet today.</p>{% endif %}
+  <form method="post" action="/briefings/morning">{{ csrf() }}<button>{{ "Refresh" if briefing else "Create" }} briefing</button></form>
+</section>
 <form class="stack" method="post" action="/tasks">
   {{ csrf() }}<input type="hidden" name="next" value="/">
   <label for="quick">Add a task</label>

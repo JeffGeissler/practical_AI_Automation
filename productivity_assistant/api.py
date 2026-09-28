@@ -6,7 +6,7 @@ from typing import Literal, Optional
 from fastapi import APIRouter, Depends, Request, Response
 from pydantic import BaseModel
 
-from . import priorities, storage, tasks
+from . import briefings, priorities, scheduler, storage, tasks
 from .security import csrf_token
 from .web import get_db, now, today
 
@@ -25,7 +25,29 @@ def csrf(request: Request):
 
 @router.get("/settings")
 def get_settings(connection=Depends(get_db)):
-    return {"priority_weights": priorities.get_weights(connection)}
+    return {"priority_weights": priorities.get_weights(connection),
+            "schedule": scheduler.get_schedule(connection).model_dump()}
+
+
+@router.put("/settings/schedule")
+def put_schedule(body: scheduler.Schedule, connection=Depends(get_db)):
+    scheduler.set_schedule(connection, body)
+    return scheduler.get_schedule(connection).model_dump()
+
+
+@router.get("/briefings")
+def get_briefing(request: Request, kind: Literal["morning", "evening"] = "morning", day: Optional[date] = None,
+                 connection=Depends(get_db)):
+    briefing = briefings.latest(connection, kind, day or today(request))
+    if briefing is None:
+        raise tasks.NotFound("No briefing for that day yet")
+    return briefing
+
+
+@router.post("/briefings", status_code=201)
+def make_briefing(body: briefings.BriefingIn, request: Request, connection=Depends(get_db)):
+    briefings.generate(connection, body.kind, now(request))
+    return briefings.latest(connection, body.kind, today(request))
 
 
 @router.put("/settings/priority-weights")

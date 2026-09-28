@@ -7,7 +7,7 @@ from pydantic import ValidationError
 
 from datetime import timedelta
 
-from . import priorities, storage, tasks
+from . import briefings, priorities, scheduler, storage, tasks
 from .web import describe, get_db, now, render, today
 
 router = APIRouter()
@@ -36,7 +36,21 @@ def task_fields(form) -> dict:
 
 @router.get("/")
 def today_page(request: Request, connection=Depends(get_db)):
-    return render(request, "today.html", ranked=priorities.rank(connection, today(request)))
+    return render(request, "today.html", ranked=priorities.rank(connection, today(request)),
+                  briefing=briefings.latest(connection, "morning", today(request)))
+
+
+@router.get("/review")
+def review_page(request: Request, connection=Depends(get_db)):
+    return render(request, "review.html", briefing=briefings.latest(connection, "evening", today(request)))
+
+
+@router.post("/briefings/{kind}")
+def make_briefing(kind: str, request: Request, connection=Depends(get_db)):
+    if kind not in ("morning", "evening"):
+        raise tasks.NotFound("Unknown briefing")
+    briefings.generate(connection, kind, now(request))
+    return redirect("/" if kind == "morning" else "/review")
 
 
 @router.post("/priorities/{task_id}")
@@ -47,7 +61,8 @@ async def override(task_id: int, request: Request, connection=Depends(get_db)):
         priorities.set_override(connection, task_id, kind, today(request), now(request))
     except FAILURES as error:
         return render(request, "today.html", 400, error=describe(error),
-                      ranked=priorities.rank(connection, today(request)))
+                      ranked=priorities.rank(connection, today(request)),
+                      briefing=briefings.latest(connection, "morning", today(request)))
     return redirect("/")
 
 
@@ -155,7 +170,18 @@ async def create_project(request: Request, connection=Depends(get_db)):
 def settings_context(request, connection):
     return {"backups": storage.list_backups(request.app.state.settings.backup_dir),
             "data_dir": request.app.state.settings.data_dir, "weights": priorities.get_weights(connection),
-            "defaults": priorities.DEFAULT_WEIGHTS}
+            "defaults": priorities.DEFAULT_WEIGHTS, "schedule": scheduler.get_schedule(connection)}
+
+
+@router.post("/settings/schedule")
+async def save_schedule(request: Request, connection=Depends(get_db)):
+    form = await request.form()
+    try:
+        scheduler.set_schedule(connection, scheduler.Schedule(morning=form.get("morning", ""),
+                                                              evening=form.get("evening", "")))
+    except FAILURES as error:
+        return render(request, "settings.html", 400, error=describe(error), **settings_context(request, connection))
+    return redirect("/settings")
 
 
 @router.get("/settings")

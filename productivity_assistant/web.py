@@ -1,5 +1,6 @@
 """FastAPI application: server-rendered pages and a JSON API on 127.0.0.1."""
-from contextlib import closing
+import asyncio
+from contextlib import asynccontextmanager, closing, suppress
 from datetime import datetime
 from pathlib import Path
 
@@ -48,14 +49,27 @@ def describe(error: Exception) -> str:
     return str(error)
 
 
-def create_app(settings: Settings = None, clock=local_now) -> FastAPI:
-    from . import api, pages
+def create_app(settings: Settings = None, clock=local_now, run_scheduler: bool = True) -> FastAPI:
+    from . import api, pages, scheduler
 
     settings = settings or load_settings()
     secret = prepare(settings)
     with closing(connect(settings.database)) as connection:
         migrate(connection)
-    app = FastAPI(title="Productivity Assistant", dependencies=[Depends(require_csrf)])
+
+    @asynccontextmanager
+    async def lifespan(app):
+        background = None
+        if run_scheduler:
+            await asyncio.to_thread(scheduler.run_once, app)  # catch up on anything missed while closed
+            background = asyncio.create_task(scheduler.run_forever(app))
+        yield
+        if background:
+            background.cancel()
+            with suppress(asyncio.CancelledError):
+                await background
+
+    app = FastAPI(title="Productivity Assistant", dependencies=[Depends(require_csrf)], lifespan=lifespan)
     app.state.settings, app.state.secret, app.state.clock = settings, secret, clock
     app.add_middleware(LocalGuard, port=settings.port)
     app.mount("/static", StaticFiles(directory=str(HERE / "static")), name="static")

@@ -31,7 +31,7 @@ def main(argv=None):
         import uvicorn
 
         from .web import create_app
-        print(f"Data folder: {settings.data_dir}\nOpen http://127.0.0.1:{settings.port}/")
+        print(f"Data folder: {settings.data_dir}\nOpen http://127.0.0.1:{settings.port}/", flush=True)
         uvicorn.run(create_app(settings), host="127.0.0.1", port=settings.port, access_log=False)
 
 

@@ -5,6 +5,16 @@
 <h1>Settings</h1>
 <p class="muted">Data folder: {{ data_dir }}</p>
 
+<h2>Schedule</h2>
+<p class="muted">Briefings are made at these times while the app runs, or when you next open it.
+  A backup is also made once a day.</p>
+<form method="post" action="/settings/schedule">
+  {{ csrf() }}
+  <label for="morning">Morning briefing</label> <input type="time" id="morning" name="morning" value="{{ schedule.morning }}" required>
+  <label for="evening">Evening review</label> <input type="time" id="evening" name="evening" value="{{ schedule.evening }}" required>
+  <button class="primary">Save schedule</button>
+</form>
+
 <h2>Priority weights</h2>
 <p class="muted">Each factor's points are multiplied by its weight (0–3). Defaults are 1.
   See how the score works in docs/PRIORITIZATION.md.</p>

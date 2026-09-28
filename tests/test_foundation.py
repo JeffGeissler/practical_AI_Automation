@@ -40,7 +40,7 @@ def test_migrations_are_versioned_and_idempotent(settings, client):
 
 
 def test_session_cookie_is_strict(settings, clock):
-    with TestClient(create_app(settings, clock=clock), base_url=BASE) as fresh:
+    with TestClient(create_app(settings, clock=clock, run_scheduler=False), base_url=BASE) as fresh:
         cookie = fresh.get("/").headers["set-cookie"]
     assert "HttpOnly" in cookie and "SameSite=Strict" in cookie
 
@@ -71,7 +71,7 @@ def test_change_requires_csrf_token(client):
 
 
 def test_csrf_token_is_bound_to_session(client, settings, clock):
-    with TestClient(create_app(settings, clock=clock), base_url=BASE) as other:
+    with TestClient(create_app(settings, clock=clock, run_scheduler=False), base_url=BASE) as other:
         other.get("/")
         stolen = client.headers["x-csrf-token"]
         assert other.put(WEIGHTS, json={"due": 2},

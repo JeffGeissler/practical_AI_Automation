@@ -1,7 +1,8 @@
 # Productivity Assistant: implementation plan and token budget
 
-Status: proposal, 2026-09-28. Implements the [design](ARCHITECTURE.md). Nothing is
-built yet. **All token and turn figures are estimates (targets), not measurements.**
+Status: **Phase 1 (M0–M3) implemented 2026-09-28** on branch `productivity-phase1`;
+M4–M10 are proposals. Implements the [design](ARCHITECTURE.md). **Token and turn
+figures in the budget table are estimates (targets), not measurements.**
 
 ## How this plan is meant to be used
 
@@ -78,8 +79,32 @@ local-model behavior on an 8 GB Mac (M4, M5).
 
 | # | Session date | Turns | Input tokens | Output tokens | vs. estimate | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| M0 | | | | | | |
-| M1 | | | | | | |
+| M0–M3 | 2026-09-28 | about 30 (one session) | not reported by the tool | not reported by the tool | about 0.2× the 155-turn estimate | All four milestones in one session after context compaction; 54 tests pass |
+
+### Phase 1 results (2026-09-28)
+
+Verified on this Mac: macOS (Darwin 27.0.0), Python 3.9.6, FastAPI 0.128.8,
+Starlette 0.49.3, Pydantic 2.13.5, uvicorn 0.39.0.
+
+| # | Done-when check | Evidence |
+| --- | --- | --- |
+| M0 | App starts; cross-site POST rejected; CI green | `tests/test_foundation.py` (Host, Origin, Referer, Sec-Fetch-Site, CSRF, session binding); manual run on 127.0.0.1: cross-site 403, foreign Host 400. CI workflow added; **not yet run on GitHub** |
+| M1 | CRUD through the UI; history; export and backup restore | `tests/test_tasks.py`: form create/edit/complete/delete, history per change, cycle-checked dependencies, CSV formula escaping, 14-backup rotation, restore with safety backup, corrupt-backup rejection |
+| M2 | Ranking matches documented examples; overrides persist; reasons shown | `tests/test_priorities.py` checks the worked example in [PRIORITIZATION.md](PRIORITIZATION.md) exactly |
+| M3 | Briefing on schedule and after a missed run; no AI | `tests/test_briefings.py`: on-time vs catch-up, once per day, startup catch-up, local-day boundary, scheduler failure isolation |
+
+Checks: `.venv/bin/ruff check .` passes; `.venv/bin/pytest -q` → 54 passed.
+
+Deviations from the design, recorded as decisions:
+
+- **Python 3.9+, not 3.11+.** Only Python 3.9.6 is installed here, and installing
+  another Python was outside this step. CI tests 3.9 and 3.12.
+- **Plain server-rendered forms before Alpine.js.** Every page works without
+  JavaScript, and the content security policy allows only the app's own files.
+  Alpine.js is added (vendored, not from a CDN) only when a page needs it.
+- **Soft delete.** Deleted tasks leave lists but keep their history.
+- **No mutating GET, no CORS.** API clients on this Mac get the CSRF token from
+  `GET /api/csrf`; other sites cannot read it.
 
 ## Runtime token budget (the app's own AI use)
 
@@ -104,7 +129,7 @@ tuned during M5.
 
 | Needed by | Decision |
 | --- | --- |
-| M0 | Python version (the Mac's system Python is 3.9; the design says 3.11+) and where private data lives |
+| M0 | ~~Python version and where private data lives~~ Decided: Python 3.9+; `~/Library/Application Support/ProductivityAssistant` (override with `PA_DATA_DIR`) |
 | M5 | Local model, chosen from measured results on this Mac |
 | M7 | Which integration first, and whether your employer allows importing its data |
 | M9 | Whether the cloud is allowed at all, and which provider |

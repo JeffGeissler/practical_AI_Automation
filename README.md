@@ -6,7 +6,7 @@ Personal automation and AI assistant projects that run on your own Mac.
 
 | Part | Status | Where |
 | --- | --- | --- |
-| **Productivity Assistant** | Design proposal, not yet built | [Design](docs/ARCHITECTURE.md) |
+| **Productivity Assistant** | Phase 1 built: tasks, priorities, briefings, backups. No AI yet | [Design](docs/ARCHITECTURE.md), [plan](docs/PRODUCTIVITY_IMPLEMENTATION_PLAN.md) |
 | **Planning for local AI apps** (Chief of Staff, Organizer) | Planning documents | [Planning index](docs/README.md) |
 | **Shortcuts automation prototype** | Small working prototype | `api/`, `handlers/` |
 
@@ -19,6 +19,30 @@ proposes and you confirm, and every feature works without AI. A cloud model is a
 optional, per-request opt-in, with the provider still to be chosen. See the
 [design](docs/ARCHITECTURE.md) for architecture, principles, data, security,
 roadmap and open decisions.
+
+**Built so far (Phase 1, no AI):** tasks and projects with dependencies and full
+change history; a transparent priority score with pins, up/down and snooze (see
+[how scoring works](docs/PRIORITIZATION.md)); a factual morning briefing and
+evening review, made on schedule or when you next open the app; JSON/CSV export;
+and a daily backup keeping the newest 14.
+
+Run it (Python 3.9 or later; verified on this Mac with Python 3.9.6):
+
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -e '.[dev]'
+.venv/bin/productivity-assistant            # then open http://127.0.0.1:8000/
+```
+
+Your data lives in `~/Library/Application Support/ProductivityAssistant`, outside
+this repository. Set `PA_DATA_DIR` to use another folder, or `PA_PORT` for another
+port. The app listens only on `127.0.0.1`.
+
+| Command | Does |
+| --- | --- |
+| `.venv/bin/productivity-assistant backup` | Write a backup now |
+| `.venv/bin/productivity-assistant restore <file>` | Replace the database with a verified backup (stop the app first); the current state is backed up first |
+| `.venv/bin/ruff check . && .venv/bin/pytest -q` | Lint and tests (synthetic data in temporary folders) |
 
 ### Shortcuts automation prototype
 
@@ -36,9 +60,10 @@ Setup and run instructions will be added once they have been verified.
 
 ## Status
 
-The Productivity Assistant and the planned local AI apps are documentation only.
-Nothing in this repository stores personal data; keep databases, documents, logs
-and secrets outside it.
+Productivity Assistant Phase 1 (M0–M3) is implemented and tested; AI features,
+documents, integrations and cloud use are not built yet. The Chief of Staff and
+Organizer apps remain planning documents. Nothing in this repository stores
+personal data; keep databases, documents, logs and secrets outside it.
 
 ## License
 

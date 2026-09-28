@@ -29,6 +29,6 @@ def settings(tmp_path):
 
 @pytest.fixture
 def client(settings, clock):
-    with TestClient(create_app(settings, clock=clock), base_url=BASE) as test_client:
+    with TestClient(create_app(settings, clock=clock, run_scheduler=False), base_url=BASE) as test_client:
         test_client.headers["x-csrf-token"] = test_client.get("/api/csrf").json()["csrf_token"]
         yield test_client
