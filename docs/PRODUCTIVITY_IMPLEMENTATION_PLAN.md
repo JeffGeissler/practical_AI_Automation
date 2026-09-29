@@ -88,7 +88,7 @@ Starlette 0.49.3, Pydantic 2.13.5, uvicorn 0.39.0.
 
 | # | Done-when check | Evidence |
 | --- | --- | --- |
-| M0 | App starts; cross-site POST rejected; CI green | `tests/test_foundation.py` (Host, Origin, Referer, Sec-Fetch-Site, CSRF, session binding); manual run on 127.0.0.1: cross-site 403, foreign Host 400. CI workflow added; **not yet run on GitHub** |
+| M0 | App starts; cross-site POST rejected; CI green | `tests/test_foundation.py` (Host, Origin, Referer, Sec-Fetch-Site, CSRF, session binding); manual run on 127.0.0.1: cross-site 403, foreign Host 400. CI passed on GitHub (run 36479457085, 2026-09-28, commit df33e34) |
 | M1 | CRUD through the UI; history; export and backup restore | `tests/test_tasks.py`: form create/edit/complete/delete, history per change, cycle-checked dependencies, CSV formula escaping, 14-backup rotation, restore with safety backup, corrupt-backup rejection |
 | M2 | Ranking matches documented examples; overrides persist; reasons shown | `tests/test_priorities.py` checks the worked example in [PRIORITIZATION.md](PRIORITIZATION.md) exactly |
 | M3 | Briefing on schedule and after a missed run; no AI | `tests/test_briefings.py`: on-time vs catch-up, once per day, startup catch-up, local-day boundary, scheduler failure isolation |

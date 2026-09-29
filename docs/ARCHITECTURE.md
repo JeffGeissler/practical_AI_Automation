@@ -6,8 +6,8 @@ an evening review, and can read your documents and work tools. AI helps with
 the tedious parts; you stay in control of what gets saved and what leaves the
 machine.
 
-**Status:** design proposal. Nothing here is implemented yet. Performance
-figures are targets, not measurements.
+**Status:** Phase 1 (core, no AI) implemented and tested; Phases 2–5 are
+proposals. Performance figures are targets, not measurements.
 
 ## Design principles
 
