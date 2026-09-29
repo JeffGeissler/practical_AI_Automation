@@ -1,0 +1,11 @@
+{% macro items(title, entries, reasons=False) %}
+{% if entries %}
+<h3>{{ title }}</h3>
+<ul>
+  {% for entry in entries %}
+  <li><a href="/tasks/{{ entry.id }}">{{ entry.title }}</a>{% if entry.due_date %} <span class="muted">due {{ entry.due_date }}</span>{% endif %}
+    {% if reasons and entry.reasons %}<div class="reasons">{{ entry.reasons|join("; ") }}</div>{% endif %}</li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endmacro %}

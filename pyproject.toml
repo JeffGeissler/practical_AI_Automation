@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "productivity-assistant"
+version = "0.1.0"
+description = "Local task and planning assistant"
+requires-python = ">=3.9"
+dependencies = [
+  "fastapi>=0.110,<1",
+  "uvicorn>=0.29",
+  "jinja2>=3.1",
+  "python-multipart>=0.0.9",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "httpx>=0.27", "ruff>=0.5"]
+
+[project.scripts]
+productivity-assistant = "productivity_assistant.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["productivity_assistant*"]
+
+[tool.setuptools.package-data]
+productivity_assistant = ["migrations/*.sql", "templates/*.html", "static/*"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py39"
+include = ["productivity_assistant/**/*.py", "tests/**/*.py"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff.lint]
+# Explicit so personal ruff configs do not change CI results.
+select = ["E", "F", "W", "B"]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Form", "fastapi.Query"]

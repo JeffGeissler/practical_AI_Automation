@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Productivity Assistant{% endblock %}</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<nav>
+  <strong>Assistant</strong>
+  <a href="/">Today</a>
+  <a href="/review">Review</a>
+  <a href="/tasks">Tasks</a>
+  <a href="/projects">Projects</a>
+  <a href="/settings">Settings</a>
+</nav>
+<main>
+{% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+{% block content %}{% endblock %}
+</main>
+</body>
+</html>
