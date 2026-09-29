@@ -130,6 +130,6 @@ tuned during M5.
 | Needed by | Decision |
 | --- | --- |
 | M0 | ~~Python version and where private data lives~~ Decided: Python 3.9+; `~/Library/Application Support/ProductivityAssistant` (override with `PA_DATA_DIR`) |
-| M5 | Local model, chosen from measured results on this Mac. First results (2026-09-29): llama3.2 is the proposed baseline; code should resolve dates and importance. See [model evaluation](PRODUCTIVITY_MODEL_EVALUATION.md) |
+| M5 | Local model, chosen from measured results on this Mac. **Decided 2026-09-29: qwen3:0.6b** (light and fast on this Mac; llama3.2 is the fallback); code resolves dates and importance. See [model evaluation](PRODUCTIVITY_MODEL_EVALUATION.md) |
 | M7 | Which integration first, and whether your employer allows importing its data |
 | M9 | Whether the cloud is allowed at all, and which provider |

@@ -70,14 +70,16 @@ These patterns come from llama3.2, the best model.
    it found. This follows the design principle that code owns calculations.
 2. **The model proposes the title, project and effort,** its strongest fields.
    Code validates them, and you still confirm every draft.
-3. **Baseline model: llama3.2:latest** (digest above). qwen3:0.6b is four times
-   faster and has the best titles, so keep it as a candidate for a title-only
-   role if speed matters.
+3. **Model: qwen3:0.6b** (digest above), **decided 2026-09-29**. When code
+   handles dates and importance, qwen3:0.6b almost ties llama3.2 on the fields
+   the model still fills (82 vs 83 of 90 for title, project and effort). It is
+   about four times faster (0.8 s vs 3.2 s typical warm reply) and uses about a
+   third of the memory (0.68 vs 2.21 GB), which suits an 8 GB Mac. llama3.2
+   remains the fallback if the held-out re-test shows qwen3:0.6b falling short.
 4. **Re-run on a new held-out set** after the prompt changes for step 1. These 30
    cases have now been looked at, so they count as development data.
 
-A decision to adopt these recommendations is still yours. Until then, M4
-remains unauthorized.
+The model choice is decided. M4 itself still needs a separate go-ahead.
 
 ## Re-running
 
