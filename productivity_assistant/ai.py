@@ -7,6 +7,7 @@ Any failure returns None so the feature falls back to its non-AI version. There 
 """
 import ipaddress
 import json
+import socket
 import threading
 import time
 import urllib.error
@@ -25,6 +26,7 @@ ALLOWED_MODELS = {
 DEFAULT_MODEL = "qwen3:0.6b"
 MAX_INPUT_CHARS = 2000  # the capture note itself is limited to 500 characters
 BUSY_WAIT_S = 1.0
+PAUSE_AFTER_FAILURE_S = 120  # after a timeout or lost connection, skip the model instead of waiting again
 
 
 class ProviderError(Exception):
@@ -56,7 +58,7 @@ class OllamaProvider:
     name = "ollama"
 
     def __init__(self, model: str = DEFAULT_MODEL, host: str = "http://127.0.0.1:11434",
-                 timeout: float = 15.0, keep_alive: str = "10m"):
+                 timeout: float = 10.0, keep_alive: str = "10m"):
         if model not in ALLOWED_MODELS:
             raise ValueError(f"Model {model} is not on the allowlist")
         address = urlsplit(host).hostname or ""
@@ -76,10 +78,10 @@ class OllamaProvider:
         try:
             with urllib.request.urlopen(request, timeout=self.timeout) as response:
                 return json.loads(response.read())
-        except TimeoutError as error:
+        except (TimeoutError, socket.timeout) as error:  # socket.timeout is separate before Python 3.10
             raise ProviderError("timeout") from error
         except urllib.error.URLError as error:
-            if isinstance(error.reason, TimeoutError):
+            if isinstance(error.reason, (TimeoutError, socket.timeout)):
                 raise ProviderError("timeout") from error
             raise ProviderError("unavailable", str(error.reason)) from error
         except (OSError, ValueError) as error:
@@ -112,6 +114,7 @@ class Gateway:
     def __init__(self, provider: Optional[Provider]):
         self.provider = provider
         self._lock = threading.Lock()
+        self._paused_until = 0.0
 
     @property
     def enabled(self) -> bool:
@@ -124,6 +127,8 @@ class Gateway:
             return None, None
         if len(system) + len(user) > MAX_INPUT_CHARS:
             return None, self._audit(connection, now, feature, "refused", 0)
+        if time.monotonic() < self._paused_until:
+            return None, self._audit(connection, now, feature, "paused", 0)
         if not self._lock.acquire(timeout=BUSY_WAIT_S):  # one request at a time
             return None, self._audit(connection, now, feature, "busy", 0)
         started, reply, outcome, proposal = time.monotonic(), None, "ok", None
@@ -132,6 +137,8 @@ class Gateway:
             proposal = check(json.loads(reply.text))
         except ProviderError as error:
             outcome = error.outcome
+            if outcome in ("timeout", "unavailable"):
+                self._paused_until = time.monotonic() + PAUSE_AFTER_FAILURE_S
         except (ValueError, TypeError, KeyError, AttributeError):  # malformed JSON or failed checks
             outcome = "invalid"
         finally:

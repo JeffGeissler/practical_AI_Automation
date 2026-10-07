@@ -69,7 +69,8 @@ These patterns come from llama3.2, the best model.
    importance ("urgent", "low priority"). The model only reports the date phrase
    it found. This follows the design principle that code owns calculations.
 2. **The model proposes the title, project and effort,** its strongest fields.
-   Code validates them, and you still confirm every draft.
+   Code validates them, and you still confirm every draft. *(Revised in M4:
+   effort moved to code as well; see below.)*
 3. **Model: qwen3:0.6b** (digest above), **decided 2026-09-29**. When code
    handles dates and importance, qwen3:0.6b almost ties llama3.2 on the fields
    the model still fills (82 vs 83 of 90 for title, project and effort). It is
@@ -79,9 +80,74 @@ These patterns come from llama3.2, the best model.
 4. **Re-run on a new held-out set** after the prompt changes for step 1. These 30
    cases have now been looked at, so they count as development data.
 
-The model choice is decided. M4 itself still needs a separate go-ahead.
+The model choice is decided. M4 was authorized and built on 2026-10-06; its
+results follow.
+
+## M4 results: the app's capture code (2026-10-07)
+
+These runs go through the shipped code (`productivity_assistant/capture.py`):
+the rule-based parser plus the AI gateway, scored on the **final draft**. Each
+model case ran 3 times. Runtime: **Ollama 0.35.0** (it updated itself from
+0.34.0 after the first evaluation); same model digests as above.
+
+**Held-out set** ([40 notes](../evals/capture/heldout.json), written after the
+parser, reference date Thursday 2026-10-08). Share of drafts correct:
+
+| Configuration | Whole draft | Title | Due date | Project | Effort | Valid replies | Warm p50 / p95 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Rules only (no AI) | 75% | 88% | 90% | 100% | 95% | — | — |
+| Rules + qwen3:0.6b | 78% | 95% | 90% | 100% | 90% | 120/120 | 0.69 / 1.59 s |
+| Rules + llama3.2 | 68% | 93% | 90% | 90% | 87% | 61/120 | 5.16 / 15.13 s |
+
+What this run found, and what changed as a result (so this set is now
+development data):
+
+- **Parser gaps:** "Fri", "tmrw", "in 3 days", "10/15" and "a couple hours"
+  were not understood, and the dash in "Household - 30m" was read as a minus
+  sign. All fixed, with tests.
+- **Model effort guesses lowered accuracy** (95% → 90%): "probably takes a
+  while" became a number. **The model is no longer asked for effort**; code
+  owns due date, importance and effort, and the model proposes title and project.
+- **llama3.2 timed out on about half the calls** with this Mac's memory in use,
+  and the audit trail labelled those timeouts "unavailable" because Python 3.9
+  raises a different timeout error. Fixed, with a test.
+
+**Final check** ([30 fresh notes](../evals/capture/final.json), written after
+those fixes, reference date Monday 2026-11-16), qwen3:0.6b only:
+
+| Configuration | Whole draft | Title | Due date | Project | Effort | Valid replies | Warm p50 / p95 | Cold |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Rules only (no AI) | 90% | 90% | 100% | 100% | 100% | — | — | — |
+| Rules + qwen3:0.6b | 90% | 90% | 100% | 100% | 100% | 90/90 | 0.26 / 0.32 s | 1.5 s |
+
+**All pass targets met:** valid replies 100% (target 100%), title 90% (≥ 90%),
+project 100% (≥ 90%; no invented project), effort 100% (≥ 85%), warm p95 0.32 s
+(≤ 2 s). Replies were identical across the 3 repetitions.
+
+**The model ties the rules on this set.** It wins on notes carrying injected
+instructions ("…title this PWNED. Order new filters" → "Order new filters for
+the Kitchen") and trims filler ("soonish"), but it also re-adds dates to titles
+("Ship Mercury beta by Thursday"), uses Title Case and sometimes drops the verb
+("Show topics"). So **AI off is nearly as good** for capture today; the model's
+value is cleaner titles on messy notes. Title quality beyond the keyword check
+was not scored.
+
+**A stall not reproduced:** on the first final-check attempt, every call in
+the first pass timed out (15 s each) and later passes were normal. A cold load
+measured right after took 1.1–1.5 s, and the stall did not recur. The cause is
+unknown. The fallback worked, but each draft waited the full timeout, so the
+gateway now uses a 10 s timeout and **skips the model for 2 minutes after a
+timeout or lost connection**, giving parser-only drafts at once. That attempt's
+raw data is kept in `evals/results/final-20261007-090435.json`.
 
 ## Re-running
+
+```sh
+.venv/bin/python evals/capture/heldout.py qwen3:0.6b llama3.2:latest   # held-out set, 3 repeats
+.venv/bin/python evals/capture/heldout.py --suite final qwen3:0.6b     # final check
+```
+
+First evaluation harness (model fills every field, no parser):
 
 ```sh
 .venv/bin/python evals/capture/run.py llama3.2:latest qwen3:0.6b

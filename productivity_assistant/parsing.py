@@ -10,7 +10,6 @@ from datetime import date, timedelta
 from typing import Optional
 
 MAX_EFFORT = 10080  # one week, the same limit as TaskIn
-WEEKDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 MONTHS = {name: number for number in range(1, 13)
           for name in (calendar.month_name[number].lower(), calendar.month_abbr[number].lower())}
 MONTHS["sept"] = 9
@@ -19,14 +18,21 @@ CONNECTORS = {"by", "on", "due", "for", "the", "this", "about", "and", "at", "in
 _ISO = re.compile(r"\b(\d{4})-(\d{2})-(\d{2})\b")
 _MONTH_DAY = re.compile(r"\b(" + "|".join(sorted(MONTHS, key=len, reverse=True)) + r")\.?\s+(\d{1,2})(?:st|nd|rd|th)?\b"
                         r"(?:,?\s*(\d{4})\b)?", re.I)
-_RELATIVE = re.compile(r"\b(today|tonight|tomorrow|yesterday)\b", re.I)
+_RELATIVE = re.compile(r"\b(today|tonight|tomorrow|tmrw|tmw|yesterday)\b", re.I)
+_IN_DAYS = re.compile(r"\bin\s+(\d{1,2}|a|one|two|three)\s+(days?|weeks?)\b", re.I)
+# US month/day, but not a fraction of a duration ("1/2 hour").
+_NUMERIC = re.compile(r"(?<![\d/])(\d{1,2})/(\d{1,2})(?:/(\d{4}))?(?![\d/])(?!\s*(?:hours?|hrs?|h\b|min))")
 _END_OF_MONTH = re.compile(r"\b(?:before\s+)?(?:the\s+)?end\s+of\s+(?:the\s+)?month\b", re.I)
-_WEEKDAY = re.compile(r"\b(next\s+|this\s+)?(" + "|".join(WEEKDAYS) + r")\b", re.I)
+_WEEKDAY = re.compile(r"\b(next\s+|this\s+)?(mon|tues?|wed|thu(?:rs?)?|fri|sat|sun)(?:day|nesday|urday)?\b\.?", re.I)
 _HIGH = re.compile(r"\b(urgent|asap|important|critical|high[ -]priority)\b", re.I)
 _LOW = re.compile(r"\b(low[ -]priority|whenever|someday)\b", re.I)
 _PHRASE_EFFORT = [(re.compile(r"\bhalf\s+an?\s+hour\b", re.I), 30), (re.compile(r"\b(?:an|one)\s+hour\b", re.I), 60),
-                  (re.compile(r"\bhalf\s+a\s+day\b", re.I), 240)]
-_NUMBER_EFFORT = re.compile(r"(-\s*)?(?<![\d.])(\d+(?:\.\d+)?)\s*(hours?|hrs?|h|minutes?|mins?|m)\b", re.I)
+                  (re.compile(r"\bhalf\s+a\s+day\b", re.I), 240),
+                  (re.compile(r"\b(?:a\s+)?couple\s+(?:of\s+)?hours\b", re.I), 120)]
+# A minus sign counts only when attached to the number ("-50 minutes"), not a dash separator ("Home - 30m").
+_NUMBER_EFFORT = re.compile(r"((?<![\w-])-)?(?<![\d./])(\d+(?:\.\d+)?)\s*(hours?|hrs?|h|minutes?|mins?|m)\b", re.I)
+_DAY_ABBREVIATIONS = {"mon": 0, "tue": 1, "wed": 2, "thu": 3, "fri": 4, "sat": 5, "sun": 6}
+_SMALL_NUMBERS = {"a": 1, "one": 1, "two": 2, "three": 3}
 
 
 @dataclass
@@ -57,10 +63,24 @@ def _resolve_dates(text: str, today: date, spans: list, notes: list) -> Optional
             explicit.add(value)
         except ValueError:
             notes.append(f"Ignored impossible date {match.group(0)}")
+    for match in _NUMERIC.finditer(text):
+        spans.append(match.span())
+        month, day, year = int(match.group(1)), int(match.group(2)), match.group(3)
+        try:
+            value = date(int(year) if year else today.year, month, day)
+            if not year and value < today:
+                value = value.replace(year=today.year + 1)
+            explicit.add(value)
+        except ValueError:
+            notes.append(f"Ignored impossible date {match.group(0)}")
     for match in _RELATIVE.finditer(text):
         spans.append(match.span())
-        offset = {"today": 0, "tonight": 0, "tomorrow": 1, "yesterday": -1}[match.group(1).lower()]
+        offset = {"today": 0, "tonight": 0, "tomorrow": 1, "tmrw": 1, "tmw": 1, "yesterday": -1}[match.group(1).lower()]
         relative.add(today + timedelta(days=offset))
+    for match in _IN_DAYS.finditer(text):
+        spans.append(match.span())
+        count = _SMALL_NUMBERS.get(match.group(1).lower()) or int(match.group(1))
+        relative.add(today + timedelta(days=count * (7 if match.group(2).lower().startswith("week") else 1)))
     for match in _END_OF_MONTH.finditer(text):
         spans.append(match.span())
         relative.add(today.replace(day=calendar.monthrange(today.year, today.month)[1]))
@@ -69,7 +89,7 @@ def _resolve_dates(text: str, today: date, spans: list, notes: list) -> Optional
         if (match.group(1) or "").strip().lower() == "next":
             notes.append(f'"{match.group(0)}" is ambiguous; set the date yourself')
             continue
-        ahead = (WEEKDAYS.index(match.group(2).lower()) - today.weekday()) % 7
+        ahead = (_DAY_ABBREVIATIONS[match.group(2).lower()[:3]] - today.weekday()) % 7
         relative.add(today + timedelta(days=ahead))
     for found in (explicit, relative):  # an explicit date wins over a weekday ("Monday Oct 5")
         if len(found) == 1:

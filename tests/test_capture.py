@@ -57,6 +57,14 @@ def task_count(client):
     ("Meet Lee next Monday", None),  # ambiguous, left for the user
     ("Send contract by 2026-02-30", None),  # impossible
     ("Move it from Friday to Monday", None),  # contradictory
+    ("Draft plan Fri", date(2026, 10, 2)),
+    ("Call Jo thurs.", date(2026, 10, 1)),
+    ("tmrw: renew photos", date(2026, 9, 30)),
+    ("Cancel gym in 3 days", date(2026, 10, 2)),
+    ("Check in two weeks", date(2026, 10, 13)),
+    ("Proofread essay by 10/15", date(2026, 10, 15)),
+    ("Pay rent 1/5", date(2027, 1, 5)),
+    ("Stretch for 1/2 hour", None),  # a fraction, not January 2
 ])
 def test_parser_dates(text, due):
     assert parse(text, TODAY, PROJECTS).due_date == due
@@ -72,6 +80,8 @@ def test_parser_dates(text, due):
     ("Clean garage, maybe a few hours", None, None),
     ("Read 2 chapters in 20 min or 1 hour", None, None),  # two durations: left for the user
     ("Important but whenever", None, None),  # contradictory importance
+    ("Fix faucet Saturday - Home - 30m", None, 30),  # a dash separator is not a minus sign
+    ("Proofread essay, a couple hours", None, 120),
 ])
 def test_parser_importance_and_effort(text, importance, effort):
     parsed = parse(text, TODAY, PROJECTS)
@@ -125,6 +135,12 @@ def test_note_values_win_over_model_and_invalid_fields_are_dropped(client):
     assert draft["task"]["project_id"] is None and draft["task"]["effort_minutes"] is None
 
 
+def test_model_effort_is_never_used(client):
+    use(client, FakeProvider({"title": "Paint the fence", "project": None, "effort_minutes": 240}))
+    draft = client.post("/api/tasks/draft", json={"text": "Paint the fence, probably takes a while"}).json()
+    assert draft["ai"] == "ok" and draft["task"]["effort_minutes"] is None
+
+
 def test_model_cannot_settle_what_the_note_left_contradictory(client):
     for name in ("Finance", "Garden"):
         client.post("/api/projects", json={"name": name})
@@ -148,6 +164,18 @@ def test_failures_fall_back_to_the_note(client, settings, provider, outcome):
     assert draft["ai"] == "unavailable" and draft["ai_call_id"] is None
     assert draft["task"]["title"] == "Pay electricity bill" and draft["task"]["due_date"] == "2026-09-29"
     assert [row["outcome"] for row in audit(settings)] == [outcome]
+
+
+def test_model_is_skipped_for_a_while_after_a_timeout(client, settings, monkeypatch):
+    provider = use(client, FakeProvider(error=ProviderError("timeout")))
+    for _ in range(3):
+        assert client.post("/api/tasks/draft", json={"text": "Buy milk"}).json()["ai"] == "unavailable"
+    assert len(provider.calls) == 1  # later drafts did not wait on the model again
+    assert [row["outcome"] for row in audit(settings)] == ["timeout", "paused", "paused"]
+    monkeypatch.setattr(ai, "PAUSE_AFTER_FAILURE_S", 0)
+    client.app.state.gateway._paused_until = 0
+    provider.error, provider.reply = None, {"title": "Buy milk", "project": None}
+    assert client.post("/api/tasks/draft", json={"text": "Buy milk"}).json()["ai"] == "ok"
 
 
 def test_one_request_at_a_time(client, settings, monkeypatch):
@@ -247,6 +275,18 @@ def test_ollama_provider_is_local_allowlisted_and_pinned(monkeypatch):
     with pytest.raises(ProviderError) as error:
         provider.complete("s", "u", {}, 16)
     assert error.value.outcome == "refused"
+
+
+def test_ollama_timeouts_are_labelled_as_timeouts(monkeypatch):
+    import socket
+    import urllib.request
+
+    def slow(*args, **kwargs):
+        raise socket.timeout("timed out")  # what Python 3.9 raises on a read timeout
+    monkeypatch.setattr(urllib.request, "urlopen", slow)
+    with pytest.raises(ProviderError) as error:
+        OllamaProvider().verify()
+    assert error.value.outcome == "timeout"
 
 
 def test_ollama_provider_sends_bounded_local_request(monkeypatch):

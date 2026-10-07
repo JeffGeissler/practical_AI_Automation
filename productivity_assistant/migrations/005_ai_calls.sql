@@ -9,7 +9,7 @@ CREATE TABLE ai_calls (
     input_tokens INTEGER,
     output_tokens INTEGER,
     duration_ms INTEGER NOT NULL,
-    outcome TEXT NOT NULL CHECK (outcome IN ('ok', 'invalid', 'timeout', 'unavailable', 'busy', 'refused')),
+    outcome TEXT NOT NULL CHECK (outcome IN ('ok', 'invalid', 'timeout', 'unavailable', 'busy', 'paused', 'refused')),
     accepted INTEGER CHECK (accepted IS NULL OR accepted = 1)
 );
 CREATE INDEX ai_calls_at ON ai_calls (at);

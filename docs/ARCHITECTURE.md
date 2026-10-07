@@ -6,8 +6,8 @@ an evening review, and can read your documents and work tools. AI helps with
 the tedious parts; you stay in control of what gets saved and what leaves the
 machine.
 
-**Status:** Phase 1 (core, no AI) implemented and tested; Phases 2–5 are
-proposals. Performance figures are targets, not measurements.
+**Status:** Phase 1 (core, no AI) and AI capture (M4) implemented and tested;
+the rest of Phases 2–5 are proposals. Performance figures are targets, not measurements.
 
 ## Design principles
 
@@ -135,7 +135,8 @@ documentation automatically.
 
 Every AI call goes through one component, which enforces these rules in code:
 
-1. **Local first.** Ollama (for example Llama 3.2 3B) handles all AI work by default.
+1. **Local first.** Ollama handles all AI work by default, with an allowlisted
+   model pinned to its digest (qwen3:0.6b since M4).
 2. **Cloud only with consent.** The cloud provider is off until enabled in
    Settings. Even then, each cloud request shows **exactly what will be sent** and
    needs a click to send. Scheduled and background jobs never use the cloud.
