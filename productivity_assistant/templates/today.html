@@ -18,11 +18,12 @@
   {% else %}<p class="muted">No briefing yet today.</p>{% endif %}
   <form method="post" action="/briefings/morning">{{ csrf() }}<button>{{ "Refresh" if briefing else "Create" }} briefing</button></form>
 </section>
-<form class="stack" method="post" action="/tasks">
-  {{ csrf() }}<input type="hidden" name="next" value="/">
+<form class="stack" method="post" action="/capture">
+  {{ csrf() }}
   <label for="quick">Add a task</label>
-  <input type="text" id="quick" name="title" maxlength="200" required placeholder="What needs doing?">
-  <button class="primary">Add</button>
+  <input type="text" id="quick" name="text" maxlength="500" required
+         placeholder="Send Q3 report to Dana by Friday, about 2 hours">
+  <button class="primary">Draft task</button>
 </form>
 <h2>Priorities</h2>
 {% if ranked %}

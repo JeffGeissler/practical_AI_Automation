@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf, task_fields %}
+{% block title %}Confirm task{% endblock %}
+{% block content %}
+{% set labels = {"title": "Title", "due_date": "Due date", "importance": "Importance", "effort_minutes": "Effort", "project_id": "Project"} %}
+<h1>Confirm task</h1>
+<p class="muted">From your note: “{{ draft.text }}”. Nothing is saved until you choose Save task.</p>
+<ul>
+  {% for key, label in labels.items() %}{% if draft.sources.get(key) %}
+  <li>{{ label }}: {{ "suggested by the local model" if draft.sources[key] == "model" else "read from your note" }}</li>
+  {% endif %}{% endfor %}
+  {% for note in draft.notes %}<li>{{ note }}</li>{% endfor %}
+</ul>
+{% if draft.ai == "unavailable" %}<p class="muted">The local model did not answer in time or gave an unusable reply, so this draft uses your note only.</p>{% endif %}
+{% if draft.ai == "off" %}<p class="muted">AI is off; this draft uses your note only.</p>{% endif %}
+<form class="stack" method="post" action="/tasks">
+  {{ csrf() }}<input type="hidden" name="next" value="/">
+  {% if draft.ai_call_id %}<input type="hidden" name="ai_call_id" value="{{ draft.ai_call_id }}">{% endif %}
+  {{ task_fields(dict(draft.task, importance=draft.task.importance or 2, notes=""), projects) }}
+  <p><button class="primary">Save task</button> <a href="/">Discard</a></p>
+</form>
+{% endblock %}

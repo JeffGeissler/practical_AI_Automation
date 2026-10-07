@@ -10,6 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import ValidationError
 
+from .ai import Gateway, OllamaProvider
 from .config import Settings, load_settings, prepare
 from .db import connect, migrate
 from .security import LocalGuard, csrf_token, require_csrf
@@ -71,6 +72,7 @@ def create_app(settings: Settings = None, clock=local_now, run_scheduler: bool =
 
     app = FastAPI(title="Productivity Assistant", dependencies=[Depends(require_csrf)], lifespan=lifespan)
     app.state.settings, app.state.secret, app.state.clock = settings, secret, clock
+    app.state.gateway = Gateway(None if settings.ai_model == "off" else OllamaProvider(settings.ai_model))
     app.add_middleware(LocalGuard, port=settings.port)
     app.mount("/static", StaticFiles(directory=str(HERE / "static")), name="static")
     app.include_router(api.router, prefix="/api")

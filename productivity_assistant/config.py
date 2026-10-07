@@ -11,6 +11,7 @@ DEFAULT_DATA_DIR = Path.home() / "Library" / "Application Support" / "Productivi
 class Settings:
     data_dir: Path
     port: int = 8000
+    ai_model: str = "off"  # an allowlisted Ollama model, or "off"
 
     @property
     def database(self) -> Path:
@@ -28,7 +29,12 @@ def load_settings(environ=os.environ) -> Settings:
     port = int(environ.get("PA_PORT", "8000"))
     if not 1024 <= port <= 65535:
         raise ValueError("PA_PORT must be between 1024 and 65535")
-    return Settings(data_dir=data_dir, port=port)
+    from .ai import ALLOWED_MODELS, DEFAULT_MODEL
+
+    ai_model = environ.get("PA_AI_MODEL", DEFAULT_MODEL)
+    if ai_model != "off" and ai_model not in ALLOWED_MODELS:
+        raise ValueError(f"PA_AI_MODEL must be off or one of: {', '.join(ALLOWED_MODELS)}")
+    return Settings(data_dir=data_dir, port=port, ai_model=ai_model)
 
 
 def prepare(settings: Settings) -> bytes:

@@ -6,7 +6,7 @@ from typing import Literal, Optional
 from fastapi import APIRouter, Depends, Request, Response
 from pydantic import BaseModel
 
-from . import briefings, priorities, scheduler, storage, tasks
+from . import ai, briefings, capture, priorities, scheduler, storage, tasks
 from .security import csrf_token
 from .web import get_db, now, today
 
@@ -87,9 +87,19 @@ def list_tasks(status: Optional[Literal["open", "done", "all"]] = "open", projec
     return [dict(row) for row in tasks.list_tasks(connection, None if status == "all" else status, project_id)]
 
 
+@router.post("/tasks/draft")
+def draft_task(body: capture.CaptureIn, request: Request, connection=Depends(get_db)):
+    """A draft to show for confirmation. Nothing is saved."""
+    return capture.draft(connection, body.text, now(request), request.app.state.gateway)
+
+
 @router.post("/tasks", status_code=201)
-def create_task(body: tasks.TaskIn, request: Request, connection=Depends(get_db)):
-    return task_json(connection, tasks.create_task(connection, body, now(request)))
+def create_task(body: tasks.TaskIn, request: Request, ai_call_id: Optional[int] = None, connection=Depends(get_db)):
+    """ai_call_id: the draft this task was confirmed from, if a model helped write it."""
+    actor = "ai_accepted" if ai.mark_accepted(connection, ai_call_id) else "you"
+    task_id = tasks.create_task(connection, body, now(request), actor=actor,
+                                source="capture" if actor == "ai_accepted" else "manual")
+    return task_json(connection, task_id)
 
 
 @router.get("/tasks/{task_id}")
