@@ -1,60 +1,70 @@
 # practical_AI_Automation
 
-Practical iOS automation framework for building powerful workflows without publishing to the App Store. This project enables iOS users to create sophisticated automation by combining Apple Shortcuts with a Python backend service.
+Personal automation and AI assistant projects that run on your own Mac.
 
-## Overview
+## What's here
 
-**practical_AI_auto** is a distributed automation system that leverages Apple's Shortcuts app to trigger custom logic running on a Python service. Instead of being limited to App Store distribution, this approach provides flexibility to run custom automation workflows locally or in the cloud.
+| Part | Status | Where |
+| --- | --- | --- |
+| **Productivity Assistant** | Phase 1 built: tasks, priorities, briefings, backups. No AI yet | [Design](docs/ARCHITECTURE.md), [plan](docs/PRODUCTIVITY_IMPLEMENTATION_PLAN.md) |
+| **Planning for local AI apps** (Chief of Staff, Organizer) | Planning documents | [Planning index](docs/README.md) |
+| **Shortcuts automation prototype** | Small working prototype | `api/`, `handlers/` |
 
-## Architecture
+### Productivity Assistant
 
-The system follows a modular, layered architecture:
+A task and planning assistant: plain-language capture, a transparent prioritized
+list, morning briefings and evening reviews, document search, and read-only
+imports from Jira, Confluence and MS Project. It is local by default. AI only
+proposes and you confirm, and every feature works without AI. A cloud model is an
+optional, per-request opt-in, with the provider still to be chosen. See the
+[design](docs/ARCHITECTURE.md) for architecture, principles, data, security,
+roadmap and open decisions.
+
+**Built so far (Phase 1, no AI):** tasks and projects with dependencies and full
+change history; a transparent priority score with pins, up/down and snooze (see
+[how scoring works](docs/PRIORITIZATION.md)); a factual morning briefing and
+evening review, made on schedule or when you next open the app; JSON/CSV export;
+and a daily backup keeping the newest 14.
+
+Run it (Python 3.9 or later; verified on this Mac with Python 3.9.6):
+
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -e '.[dev]'
+.venv/bin/productivity-assistant            # then open http://127.0.0.1:8000/
+```
+
+Your data lives in `~/Library/Application Support/ProductivityAssistant`, outside
+this repository. Set `PA_DATA_DIR` to use another folder, or `PA_PORT` for another
+port. The app listens only on `127.0.0.1`.
+
+| Command | Does |
+| --- | --- |
+| `.venv/bin/productivity-assistant backup` | Write a backup now |
+| `.venv/bin/productivity-assistant restore <file>` | Replace the database with a verified backup (stop the app first); the current state is backed up first |
+| `.venv/bin/ruff check . && .venv/bin/pytest -q` | Lint and tests (synthetic data in temporary folders) |
+
+### Shortcuts automation prototype
+
+An Apple Shortcut sends an HTTP request to a small Python service, which runs a
+handler and returns JSON:
 
 ```
-Apple Shortcut
-    ↓ (HTTP request)
-curl / HTTP Client
-    ↓
-Python Service (Local or Cloud)
-    ↓
-Handler (Modular Logic)
-    ↓
-Output Options
-    ├── GitHub (repo updates, issues, PRs)
-    ├── JSON (structured data)
-    └── Notifications (alerts, messages)
+Apple Shortcut → HTTP request → FastAPI service → handler → JSON response
 ```
 
-### Components
+The service (`api/main.py`) exposes `POST /execute`, taking an `action` and a
+`payload`. The one handler today is `log_fitness` (`handlers/fitness.py`), which
+returns a confirmation for a meal. Dependencies are listed in `requirements.txt`.
+Setup and run instructions will be added once they have been verified.
 
-- **Apple Shortcut**: Entry point triggering the automation workflow
-- **HTTP Client (curl)**: Sends requests from the Shortcut to the backend service
-- **Python Service**: Backend processing layer (can run locally or on cloud infrastructure)
-- **Handler**: Modular business logic processing requests and orchestrating workflows
-- **Output**: Flexible output destinations including GitHub integration, JSON exports, and system notifications
+## Status
 
-## Requirements
-
-- iOS device with Shortcuts app
-- Python 3.8+
-- HTTP connectivity between iOS device and Python service
-
-## Getting Started
-
-*(Project setup instructions coming soon)*
-
-## Usage
-
-*(Usage examples and documentation coming soon)*
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit pull requests or open issues for bugs and feature requests.
+Productivity Assistant Phase 1 (M0–M3) is implemented and tested; AI features,
+documents, integrations and cloud use are not built yet. The Chief of Staff and
+Organizer apps remain planning documents. Nothing in this repository stores
+personal data; keep databases, documents, logs and secrets outside it.
 
 ## License
 
-To be determined
-
-## Local AI application planning
-
-See [the planning index](docs/README.md) for the proposed AI Chief of Staff and Organizer applications, shared architecture, decisions, and model evaluation plan. This work is documentation only; the existing Shortcuts prototype is preserved. The new applications require local-only inference and the security boundaries described in those plans.
+To be determined.

@@ -1,0 +1,36 @@
+{% macro csrf() %}<input type="hidden" name="csrf_token" value="{{ csrf_token }}">{% endmacro %}
+
+{% macro status_button(task, next) %}
+<form class="inline" method="post" action="/tasks/{{ task.id }}/status">
+  {{ csrf() }}<input type="hidden" name="next" value="{{ next }}">
+  {% if task.status == "open" %}
+  <input type="hidden" name="status" value="done"><button aria-label="Mark {{ task.title }} done">Done</button>
+  {% else %}
+  <input type="hidden" name="status" value="open"><button aria-label="Reopen {{ task.title }}">Reopen</button>
+  {% endif %}
+</form>
+{% endmacro %}
+
+{% macro task_fields(task=None, projects=[]) %}
+<label for="title">Title</label>
+<input type="text" id="title" name="title" maxlength="200" required value="{{ task.title if task else '' }}">
+<label for="due_date">Due date</label>
+<input type="date" id="due_date" name="due_date" value="{{ task.due_date or '' if task else '' }}">
+<label for="importance">Importance</label>
+<select id="importance" name="importance">
+  {% for value, label in [(1, "Low"), (2, "Normal"), (3, "High")] %}
+  <option value="{{ value }}" {% if (task.importance if task else 2) == value %}selected{% endif %}>{{ label }}</option>
+  {% endfor %}
+</select>
+<label for="effort_minutes">Effort (minutes)</label>
+<input type="number" id="effort_minutes" name="effort_minutes" min="1" max="10080" value="{{ task.effort_minutes or '' if task else '' }}">
+<label for="project_id">Project</label>
+<select id="project_id" name="project_id">
+  <option value="">None</option>
+  {% for project in projects %}
+  <option value="{{ project.id }}" {% if task and task.project_id == project.id %}selected{% endif %}>{{ project.name }}</option>
+  {% endfor %}
+</select>
+<label for="notes">Notes</label>
+<textarea id="notes" name="notes" rows="3" maxlength="10000">{{ task.notes if task else '' }}</textarea>
+{% endmacro %}

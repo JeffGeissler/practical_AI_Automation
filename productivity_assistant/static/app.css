@@ -1,0 +1,17 @@
+:root { --ink: #1d232a; --muted: #5d6873; --line: #d9dee3; --accent: #1f5fa8; --bad: #a3261b; --bg: #fbfbfa; }
+* { box-sizing: border-box; }
+body { margin: 0; font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); }
+nav { display: flex; flex-wrap: wrap; gap: 1rem; align-items: baseline; padding: .75rem 1rem; border-bottom: 1px solid var(--line); background: #fff; }
+nav a { color: var(--accent); text-decoration: none; }
+main { max-width: 60rem; margin: 0 auto; padding: 1rem; }
+h1 { font-size: 1.4rem; } h2 { font-size: 1.1rem; margin-top: 1.75rem; }
+.error { color: var(--bad); border-left: 3px solid var(--bad); padding-left: .5rem; }
+.muted, .reasons { color: var(--muted); font-size: .9em; }
+table { border-collapse: collapse; width: 100%; } td, th { text-align: left; padding: .35rem .5rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.table-wrap { overflow-x: auto; }
+form.inline { display: inline; } form.stack label { display: block; margin: .5rem 0 .15rem; }
+input, select, textarea, button { font: inherit; } input[type=text], textarea { width: 100%; max-width: 36rem; }
+button { border: 1px solid var(--line); background: #fff; border-radius: 4px; padding: .2rem .6rem; cursor: pointer; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.done { text-decoration: line-through; color: var(--muted); }
+.pin { font-weight: 600; color: var(--accent); }

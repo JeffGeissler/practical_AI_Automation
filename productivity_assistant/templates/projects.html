@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf %}
+{% block title %}Projects{% endblock %}
+{% block content %}
+<h1>Projects</h1>
+<ul>
+  {% for project in projects %}
+  <li><a href="/tasks?project_id={{ project.id }}">{{ project.name }}</a>
+    <span class="muted">{{ project.open_tasks }} open{% if project.private %} · private{% endif %}</span></li>
+  {% else %}<li class="muted">No projects yet.</li>{% endfor %}
+</ul>
+<h2>New project</h2>
+<form class="stack" method="post" action="/projects">
+  {{ csrf() }}
+  <label for="name">Name</label><input type="text" id="name" name="name" maxlength="100" required>
+  <label><input type="checkbox" name="private"> Private (never sent to a cloud model)</label>
+  <p><button class="primary">Create project</button></p>
+</form>
+{% endblock %}

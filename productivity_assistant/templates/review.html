@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf %}
+{% from "_briefing.html" import items %}
+{% block title %}Evening review{% endblock %}
+{% block content %}
+<h1>Evening review, {{ now.strftime("%A %-d %B") }}</h1>
+{% if briefing %}
+{% set c = briefing.content %}
+<p class="muted">{{ c.open_count }} open · generated {{ briefing.generated_at }} UTC ({{ briefing.trigger|replace("_", "-") }})</p>
+{{ items("Finished today", c.completed_today) }}
+{{ items("Still due or overdue", c.still_due) }}
+{{ items("Tomorrow's top " ~ c.tomorrow|length, c.tomorrow, True) }}
+{% if not (c.completed_today or c.still_due or c.tomorrow) %}<p class="muted">Nothing to review.</p>{% endif %}
+{% else %}<p class="muted">No review yet today.</p>{% endif %}
+<form method="post" action="/briefings/evening">{{ csrf() }}<button>{{ "Refresh" if briefing else "Create" }} review</button></form>
+{% endblock %}
