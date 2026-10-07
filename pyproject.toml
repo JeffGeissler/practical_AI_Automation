@@ -29,7 +29,7 @@ productivity_assistant = ["migrations/*.sql", "templates/*.html", "static/*"]
 [tool.ruff]
 line-length = 120
 target-version = "py39"
-include = ["productivity_assistant/**/*.py", "tests/**/*.py"]
+include = ["productivity_assistant/**/*.py", "tests/**/*.py", "evals/**/*.py"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -37,6 +37,10 @@ testpaths = ["tests"]
 [tool.ruff.lint]
 # Explicit so personal ruff configs do not change CI results.
 select = ["E", "F", "W", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+# Prompt text must stay byte-identical across runs, so it is not re-wrapped.
+"evals/**" = ["E501"]
 
 [tool.ruff.lint.flake8-bugbear]
 extend-immutable-calls = ["fastapi.Depends", "fastapi.Form", "fastapi.Query"]

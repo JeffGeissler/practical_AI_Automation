@@ -7,7 +7,7 @@ from pydantic import ValidationError
 
 from datetime import timedelta
 
-from . import briefings, priorities, scheduler, storage, tasks
+from . import ai, briefings, capture, priorities, scheduler, storage, tasks
 from .web import describe, get_db, now, render, today
 
 router = APIRouter()
@@ -88,11 +88,29 @@ def task_list(request: Request, status: str = "open", project_id: Optional[int] 
 @router.post("/tasks")
 async def create_task(request: Request, connection=Depends(get_db)):
     form = await request.form()
+    call_id = form.get("ai_call_id", "")
     try:
-        tasks.create_task(connection, tasks.TaskIn(**task_fields(form)), now(request))
+        data = tasks.TaskIn(**task_fields(form))
+        actor = "ai_accepted" if call_id.isdigit() and ai.mark_accepted(connection, int(call_id)) else "you"
+        tasks.create_task(connection, data, now(request), actor=actor,
+                          source="capture" if actor == "ai_accepted" else "manual")
     except FAILURES as error:
         return render(request, "tasks.html", 400, error=describe(error), **tasks_context(connection))
     return redirect(safe_next(form.get("next"), "/tasks"))
+
+
+@router.post("/capture")
+async def capture_note(request: Request, connection=Depends(get_db)):
+    """Show the note as an editable draft; saving happens only through POST /tasks."""
+    form = await request.form()
+    try:
+        note = capture.CaptureIn(text=form.get("text", ""))
+    except ValidationError as error:
+        return render(request, "today.html", 400, error=describe(error),
+                      ranked=priorities.rank(connection, today(request)),
+                      briefing=briefings.latest(connection, "morning", today(request)))
+    result = capture.draft(connection, note.text, now(request), request.app.state.gateway)
+    return render(request, "capture.html", draft=result, projects=tasks.list_projects(connection))
 
 
 def task_context(connection, task_id):

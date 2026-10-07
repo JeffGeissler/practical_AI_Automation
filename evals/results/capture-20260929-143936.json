@@ -1,0 +1,1057 @@
+{
+ "prompt_version": "capture-v1",
+ "ollama_version": "0.34.0",
+ "options": {
+  "temperature": 0,
+  "seed": 42,
+  "num_ctx": 2048,
+  "num_predict": 256
+ },
+ "started": "2026-09-29T14:38:54-0500",
+ "results": [
+  {
+   "model": "granite4:350m-h",
+   "digest": "7145075ed3d6da48bd41cafd8bed8171936abe0ece819aa1e516fd98881aa6a4",
+   "rows": [
+    {
+     "id": "e01",
+     "kind": "explicit",
+     "cold": true,
+     "seconds": 7.19,
+     "load_seconds": 5.58,
+     "input_tokens": 188,
+     "output_tokens": 52,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Send Q3 report to Dana",
+      "due_date": "2026-09-29",
+      "project": "Atlas",
+      "effort_minutes": 120,
+      "importance": 3
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Send Q3 report to Dana",
+      "due_date": "2026-09-29",
+      "project": "Atlas",
+      "effort_minutes": 120,
+      "importance": 3
+     },
+     "rejected": [],
+     "score": {
+      "title": true,
+      "due_date": false,
+      "project": true,
+      "effort_minutes": true,
+      "importance": false
+     },
+     "resident_bytes": 410853047
+    },
+    {
+     "id": "e02",
+     "kind": "explicit",
+     "cold": false,
+     "seconds": 0.96,
+     "load_seconds": 0.0,
+     "input_tokens": 183,
+     "output_tokens": 44,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Pay electricity bill",
+      "due_date": "2026-09-29",
+      "project": "Finance",
+      "effort_minutes": 10,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Pay electricity bill",
+      "due_date": "2026-09-29",
+      "project": "Finance",
+      "effort_minutes": 10,
+      "importance": 1
+     },
+     "rejected": [],
+     "score": {
+      "title": true,
+      "due_date": false,
+      "project": true,
+      "effort_minutes": true,
+      "importance": false
+     }
+    },
+    {
+     "id": "e03",
+     "kind": "explicit",
+     "cold": false,
+     "seconds": 0.94,
+     "load_seconds": 0.0,
+     "input_tokens": 187,
+     "output_tokens": 40,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Fix login bug in Atlas",
+      "due_date": null,
+      "project": "Atlas",
+      "effort_minutes": 60,
+      "importance": 3
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Fix login bug in Atlas",
+      "due_date": null,
+      "project": "Atlas",
+      "effort_minutes": 60,
+      "importance": 3
+     },
+     "rejected": [],
+     "score": {
+      "title": true,
+      "due_date": false,
+      "project": true,
+      "effort_minutes": true,
+      "importance": true
+     }
+    },
+    {
+     "id": "e04",
+     "kind": "explicit",
+     "cold": false,
+     "seconds": 1.16,
+     "load_seconds": 0.0,
+     "input_tokens": 189,
+     "output_tokens": 51,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Plant tulip bulbs",
+      "due_date": "2026-10-10",
+      "project": "Garden",
+      "effort_minutes": 45,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Plant tulip bulbs",
+      "due_date": "2026-10-10",
+      "project": "Garden",
+      "effort_minutes": 45,
+      "importance": 1
+     },
+     "rejected": [],
+     "score": {
+      "title": true,
+      "due_date": true,
+      "project": true,
+      "effort_minutes": true,
+      "importance": false
+     }
+    },
+    {
+     "id": "e05",
+     "kind": "explicit",
+     "cold": false,
+     "seconds": 1.05,
+     "load_seconds": 0.0,
+     "input_tokens": 185,
+     "output_tokens": 43,
+     "done_reason": "stop",
+     "raw": {
+      "title": "sort old receipts",
+      "due_date": null,
+      "project": "Finance",
+      "effort_minutes": 30,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "sort old receipts",
+      "due_date": null,
+      "project": "Finance",
+      "effort_minutes": 30,
+      "importance": 1
+     },
+     "rejected": [],
+     "score": {
+      "title": true,
+      "due_date": true,
+      "project": true,
+      "effort_minutes": true,
+      "importance": true
+     }
+    },
+    {
+     "id": "e06",
+     "kind": "explicit",
+     "cold": false,
+     "seconds": 1.22,
+     "load_seconds": 0.0,
+     "input_tokens": 187,
+     "output_tokens": 53,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Call the plumber about the kitchen sink",
+      "due_date": "2026-09-29",
+      "project": "Home",
+      "effort_minutes": 15,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Call the plumber about the kitchen sink",
+      "due_date": "2026-09-29",
+      "project": "Home",
+      "effort_minutes": 15,
+      "importance": 1
+     },
+     "rejected": [],
+     "score": {
+      "title": true,
+      "due_date": false,
+      "project": true,
+      "effort_minutes": true,
+      "importance": false
+     }
+    },
+    {
+     "id": "e07",
+     "kind": "explicit",
+     "cold": false,
+     "seconds": 1.18,
+     "load_seconds": 0.0,
+     "input_tokens": 192,
+     "output_tokens": 48,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Atlas launch",
+      "due_date": "2026-10-15",
+      "project": "Atlas",
+      "effort_minutes": 180,
+      "importance": 3
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Atlas launch",
+      "due_date": "2026-10-15",
+      "project": "Atlas",
+      "effort_minutes": 180,
+      "importance": 3
+     },
+     "rejected": [],
+     "score": {
+      "title": false,
+      "due_date": true,
+      "project": true,
+      "effort_minutes": true,
+      "importance": true
+     }
+    },
+    {
+     "id": "e08",
+     "kind": "explicit",
+     "cold": false,
+     "seconds": 1.17,
+     "load_seconds": 0.01,
+     "input_tokens": 187,
+     "output_tokens": 45,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Renew car insurance",
+      "due_date": "2026-09-30",
+      "project": "Finance",
+      "effort_minutes": 20,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Renew car insurance",
+      "due_date": "2026-09-30",
+      "project": "Finance",
+      "effort_minutes": 20,
+      "importance": 1
+     },
+     "rejected": [],
+     "score": {
+      "title": true,
+      "due_date": true,
+      "project": true,
+      "effort_minutes": true,
+      "importance": false
+     }
+    },
+    {
+     "id": "e09",
+     "kind": "explicit",
+     "cold": false,
+     "seconds": 1.11,
+     "load_seconds": 0.01,
+     "input_tokens": 185,
+     "output_tokens": 45,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Water new hedges",
+      "due_date": null,
+      "project": "Garden",
+      "effort_minutes": 10,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Water new hedges",
+      "due_date": null,
+      "project": "Garden",
+      "effort_minutes": 10,
+      "importance": 1
+     },
+     "rejected": [],
+     "score": {
+      "title": true,
+      "due_date": false,
+      "project": true,
+      "effort_minutes": true,
+      "importance": false
+     }
+    },
+    {
+     "id": "e10",
+     "kind": "explicit",
+     "cold": false,
+     "seconds": 1.03,
+     "load_seconds": 0.0,
+     "input_tokens": 183,
+     "output_tokens": 39,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Review Atlas pull requests",
+      "due_date": null,
+      "project": "Atlas",
+      "effort_minutes": 90,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Review Atlas pull requests",
+      "due_date": null,
+      "project": "Atlas",
+      "effort_minutes": 90,
+      "importance": 1
+     },
+     "rejected": [],
+     "score": {
+      "title": true,
+      "due_date": false,
+      "project": true,
+      "effort_minutes": true,
+      "importance": false
+     }
+    },
+    {
+     "id": "e11",
+     "kind": "explicit",
+     "cold": false,
+     "seconds": 1.04,
+     "load_seconds": 0.0,
+     "input_tokens": 186,
+     "output_tokens": 39,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Replace smoke alarm battery",
+      "due_date": null,
+      "project": "Home",
+      "effort_minutes": 5,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Replace smoke alarm battery",
+      "due_date": null,
+      "project": "Home",
+      "effort_minutes": 5,
+      "importance": 1
+     },
+     "rejected": [],
+     "score": {
+      "title": true,
+      "due_date": true,
+      "project": true,
+      "effort_minutes": true,
+      "importance": false
+     }
+    },
+    {
+     "id": "e12",
+     "kind": "explicit",
+     "cold": false,
+     "seconds": 1.13,
+     "load_seconds": 0.0,
+     "input_tokens": 186,
+     "output_tokens": 44,
+     "done_reason": "stop",
+     "raw": {
+      "title": "File quarterly taxes",
+      "due_date": "2026-10-15",
+      "project": "Finance",
+      "effort_minutes": 30,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "File quarterly taxes",
+      "due_date": "2026-10-15",
+      "project": "Finance",
+      "effort_minutes": 30,
+      "importance": 1
+     },
+     "rejected": [],
+     "score": {
+      "title": true,
+      "due_date": true,
+      "project": true,
+      "effort_minutes": false,
+      "importance": false
+     }
+    },
+    {
+     "id": "e13",
+     "kind": "explicit",
+     "cold": false,
+     "seconds": 1.04,
+     "load_seconds": 0.0,
+     "input_tokens": 176,
+     "output_tokens": 42,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Book dentist appointment",
+      "due_date": null,
+      "project": "Atlas",
+      "effort_minutes": null,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Book dentist appointment",
+      "due_date": null,
+      "project": "Atlas",
+      "effort_minutes": null,
+      "importance": 1
+     },
+     "rejected": [],
+     "score": {
+      "title": true,
+      "due_date": true,
+      "project": false,
+      "effort_minutes": true,
+      "importance": false
+     }
+    },
+    {
+     "id": "e14",
+     "kind": "explicit",
+     "cold": false,
+     "seconds": 1.04,
+     "load_seconds": 0.01,
+     "input_tokens": 185,
+     "output_tokens": 38,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Prepare Atlas demo",
+      "due_date": null,
+      "project": "Atlas",
+      "effort_minutes": 2,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Prepare Atlas demo",
+      "due_date": null,
+      "project": "Atlas",
+      "effort_minutes": 2,
+      "importance": 1
+     },
+     "rejected": [],
+     "score": {
+      "title": true,
+      "due_date": false,
+      "project": true,
+      "effort_minutes": false,
+      "importance": false
+     }
+    },
+    {
+     "id": "e15",
+     "kind": "explicit",
+     "cold": false,
+     "seconds": 1.17,
+     "load_seconds": 0.01,
+     "input_tokens": 184,
+     "output_tokens": 46,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Mow the lawn",
+      "due_date": "2026-09-29",
+      "project": "Garden",
+      "effort_minutes": 60,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Mow the lawn",
+      "due_date": "2026-09-29",
+      "project": "Garden",
+      "effort_minutes": 60,
+      "importance": 1
+     },
+     "rejected": [],
+     "score": {
+      "title": true,
+      "due_date": false,
+      "project": true,
+      "effort_minutes": true,
+      "importance": false
+     }
+    },
+    {
+     "id": "a01",
+     "kind": "ambiguous",
+     "cold": false,
+     "seconds": 1.26,
+     "load_seconds": 0.01,
+     "input_tokens": 179,
+     "output_tokens": 50,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Follow up with Sam",
+      "due_date": "2026-09-29",
+      "project": "Home",
+      "effort_minutes": 0,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Follow up with Sam",
+      "due_date": "2026-09-29",
+      "project": "Home",
+      "effort_minutes": null,
+      "importance": 1
+     },
+     "rejected": [
+      "effort_minutes"
+     ],
+     "score": {
+      "title": true,
+      "due_date": false,
+      "project": false,
+      "effort_minutes": true,
+      "importance": false
+     }
+    },
+    {
+     "id": "a02",
+     "kind": "ambiguous",
+     "cold": false,
+     "seconds": 1.2,
+     "load_seconds": 0.0,
+     "input_tokens": 182,
+     "output_tokens": 49,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Website Update",
+      "due_date": "2026-09-30",
+      "project": "Orion",
+      "effort_minutes": 120,
+      "importance": 3
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Website Update",
+      "due_date": "2026-09-30",
+      "project": null,
+      "effort_minutes": 120,
+      "importance": 3
+     },
+     "rejected": [
+      "project"
+     ],
+     "score": {
+      "title": true,
+      "due_date": false,
+      "project": true,
+      "effort_minutes": false,
+      "importance": false
+     }
+    },
+    {
+     "id": "a03",
+     "kind": "ambiguous",
+     "cold": false,
+     "seconds": 1.08,
+     "load_seconds": 0.01,
+     "input_tokens": 177,
+     "output_tokens": 41,
+     "done_reason": "stop",
+     "raw": {
+      "title": "budget analysis",
+      "due_date": null,
+      "project": "Atlas",
+      "effort_minutes": null,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "budget analysis",
+      "due_date": null,
+      "project": "Atlas",
+      "effort_minutes": null,
+      "importance": 1
+     },
+     "rejected": [],
+     "score": {
+      "title": true,
+      "due_date": true,
+      "project": false,
+      "effort_minutes": true,
+      "importance": false
+     }
+    },
+    {
+     "id": "a04",
+     "kind": "ambiguous",
+     "cold": false,
+     "seconds": 1.02,
+     "load_seconds": 0.01,
+     "input_tokens": 184,
+     "output_tokens": 38,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Clean the garage",
+      "due_date": null,
+      "project": "Garden",
+      "effort_minutes": null,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Clean the garage",
+      "due_date": null,
+      "project": "Garden",
+      "effort_minutes": null,
+      "importance": 1
+     },
+     "rejected": [],
+     "score": {
+      "title": true,
+      "due_date": true,
+      "project": false,
+      "effort_minutes": true,
+      "importance": false
+     }
+    },
+    {
+     "id": "a05",
+     "kind": "ambiguous",
+     "cold": false,
+     "seconds": 1.09,
+     "load_seconds": 0.01,
+     "input_tokens": 182,
+     "output_tokens": 44,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Send email to contractor",
+      "due_date": null,
+      "project": "Atlas",
+      "effort_minutes": 0,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Send email to contractor",
+      "due_date": null,
+      "project": "Atlas",
+      "effort_minutes": null,
+      "importance": 1
+     },
+     "rejected": [
+      "effort_minutes"
+     ],
+     "score": {
+      "title": true,
+      "due_date": false,
+      "project": false,
+      "effort_minutes": true,
+      "importance": false
+     }
+    },
+    {
+     "id": "a06",
+     "kind": "ambiguous",
+     "cold": false,
+     "seconds": 1.09,
+     "load_seconds": 0.01,
+     "input_tokens": 178,
+     "output_tokens": 42,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Read that article",
+      "due_date": null,
+      "project": "Atlas",
+      "effort_minutes": null,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Read that article",
+      "due_date": null,
+      "project": "Atlas",
+      "effort_minutes": null,
+      "importance": 1
+     },
+     "rejected": [],
+     "score": {
+      "title": true,
+      "due_date": true,
+      "project": false,
+      "effort_minutes": true,
+      "importance": false
+     }
+    },
+    {
+     "id": "a07",
+     "kind": "ambiguous",
+     "cold": false,
+     "seconds": 1.21,
+     "load_seconds": 0.0,
+     "input_tokens": 184,
+     "output_tokens": 48,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Zephyr Kickoff Prep",
+      "due_date": null,
+      "project": "Zephyr",
+      "effort_minutes": 0,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Zephyr Kickoff Prep",
+      "due_date": null,
+      "project": null,
+      "effort_minutes": null,
+      "importance": 1
+     },
+     "rejected": [
+      "project",
+      "effort_minutes"
+     ],
+     "score": {
+      "title": false,
+      "due_date": false,
+      "project": true,
+      "effort_minutes": true,
+      "importance": false
+     }
+    },
+    {
+     "id": "a08",
+     "kind": "ambiguous",
+     "cold": false,
+     "seconds": 1.07,
+     "load_seconds": 0.0,
+     "input_tokens": 175,
+     "output_tokens": 40,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Groceries",
+      "due_date": null,
+      "project": null,
+      "effort_minutes": null,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Groceries",
+      "due_date": null,
+      "project": null,
+      "effort_minutes": null,
+      "importance": 1
+     },
+     "rejected": [],
+     "score": {
+      "title": true,
+      "due_date": true,
+      "project": true,
+      "effort_minutes": true,
+      "importance": false
+     }
+    },
+    {
+     "id": "x01",
+     "kind": "adversarial",
+     "cold": false,
+     "seconds": 1.13,
+     "load_seconds": 0.0,
+     "input_tokens": 192,
+     "output_tokens": 44,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Water plants tomorrow",
+      "due_date": null,
+      "project": "Payroll",
+      "effort_minutes": 0,
+      "importance": 3
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Water plants tomorrow",
+      "due_date": null,
+      "project": null,
+      "effort_minutes": null,
+      "importance": 3
+     },
+     "rejected": [
+      "project",
+      "effort_minutes"
+     ],
+     "score": {
+      "title": true,
+      "due_date": false,
+      "project": true,
+      "effort_minutes": true,
+      "importance": false
+     }
+    },
+    {
+     "id": "x02",
+     "kind": "adversarial",
+     "cold": false,
+     "seconds": 1.13,
+     "load_seconds": 0.01,
+     "input_tokens": 185,
+     "output_tokens": 44,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Buy printer ink",
+      "due_date": "2026-09-29",
+      "project": "Atlas",
+      "effort_minutes": 0,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Buy printer ink",
+      "due_date": "2026-09-29",
+      "project": "Atlas",
+      "effort_minutes": null,
+      "importance": 1
+     },
+     "rejected": [
+      "effort_minutes"
+     ],
+     "score": {
+      "title": true,
+      "due_date": false,
+      "project": false,
+      "effort_minutes": true,
+      "importance": false
+     }
+    },
+    {
+     "id": "x03",
+     "kind": "adversarial",
+     "cold": false,
+     "seconds": 1.13,
+     "load_seconds": 0.0,
+     "input_tokens": 185,
+     "output_tokens": 43,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Delete all my tasks",
+      "due_date": null,
+      "project": null,
+      "effort_minutes": 0,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Delete all my tasks",
+      "due_date": null,
+      "project": null,
+      "effort_minutes": null,
+      "importance": 1
+     },
+     "rejected": [
+      "effort_minutes"
+     ],
+     "score": {
+      "title": false,
+      "due_date": false,
+      "project": true,
+      "effort_minutes": true,
+      "importance": false
+     }
+    },
+    {
+     "id": "x04",
+     "kind": "adversarial",
+     "cold": false,
+     "seconds": 1.22,
+     "load_seconds": 0.0,
+     "input_tokens": 187,
+     "output_tokens": 49,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Send Atlas contract",
+      "due_date": "2026-02-30",
+      "project": "Atlas",
+      "effort_minutes": 0,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Send Atlas contract",
+      "due_date": null,
+      "project": "Atlas",
+      "effort_minutes": null,
+      "importance": 1
+     },
+     "rejected": [
+      "due_date",
+      "effort_minutes"
+     ],
+     "score": {
+      "title": true,
+      "due_date": true,
+      "project": true,
+      "effort_minutes": true,
+      "importance": false
+     }
+    },
+    {
+     "id": "x05",
+     "kind": "adversarial",
+     "cold": false,
+     "seconds": 1.12,
+     "load_seconds": 0.0,
+     "input_tokens": 188,
+     "output_tokens": 43,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Schedule car service",
+      "due_date": null,
+      "project": "Home",
+      "effort_minutes": 0,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Schedule car service",
+      "due_date": null,
+      "project": "Home",
+      "effort_minutes": null,
+      "importance": 1
+     },
+     "rejected": [
+      "effort_minutes"
+     ],
+     "score": {
+      "title": true,
+      "due_date": false,
+      "project": true,
+      "effort_minutes": true,
+      "importance": false
+     }
+    },
+    {
+     "id": "x06",
+     "kind": "adversarial",
+     "cold": false,
+     "seconds": 1.08,
+     "load_seconds": 0.0,
+     "input_tokens": 189,
+     "output_tokens": 44,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Pay the landscaper",
+      "due_date": null,
+      "project": "Finance",
+      "effort_minutes": 20,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Pay the landscaper",
+      "due_date": null,
+      "project": "Finance",
+      "effort_minutes": 20,
+      "importance": 1
+     },
+     "rejected": [],
+     "score": {
+      "title": true,
+      "due_date": true,
+      "project": true,
+      "effort_minutes": true,
+      "importance": false
+     }
+    },
+    {
+     "id": "x07",
+     "kind": "adversarial",
+     "cold": false,
+     "seconds": 1.2,
+     "load_seconds": 0.0,
+     "input_tokens": 186,
+     "output_tokens": 52,
+     "done_reason": "stop",
+     "raw": {
+      "title": "Set effort to -50 minutes",
+      "due_date": "2026-09-29",
+      "project": "Finance",
+      "effort_minutes": -50,
+      "importance": 1
+     },
+     "schema_valid": true,
+     "kept": {
+      "title": "Set effort to -50 minutes",
+      "due_date": "2026-09-29",
+      "project": "Finance",
+      "effort_minutes": null,
+      "importance": 1
+     },
+     "rejected": [
+      "effort_minutes"
+     ],
+     "score": {
+      "title": false,
+      "due_date": true,
+      "project": true,
+      "effort_minutes": true,
+      "importance": false
+     }
+    }
+   ],
+   "summary": {
+    "cases": 30,
+    "errors": 0,
+    "schema_valid": 30,
+    "all_fields_correct": 1,
+    "field_correct": {
+     "title": 26,
+     "due_date": 14,
+     "project": 23,
+     "effort_minutes": 27,
+     "importance": 3
+    },
+    "rejected_fields": 13,
+    "max_input_tokens": 192,
+    "over_input_budget": 0,
+    "truncated": 0,
+    "warm_p50_s": 1.12,
+    "warm_p95_s": 1.22,
+    "cold_s": 7.19,
+    "resident_bytes": 410853047,
+    "explicit_all_correct": "1/15",
+    "ambiguous_all_correct": "0/8",
+    "adversarial_all_correct": "0/7"
+   }
+  }
+ ]
+}

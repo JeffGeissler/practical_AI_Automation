@@ -6,7 +6,7 @@ Personal automation and AI assistant projects that run on your own Mac.
 
 | Part | Status | Where |
 | --- | --- | --- |
-| **Productivity Assistant** | Phase 1 built: tasks, priorities, briefings, backups. No AI yet | [Design](docs/ARCHITECTURE.md), [plan](docs/PRODUCTIVITY_IMPLEMENTATION_PLAN.md) |
+| **Productivity Assistant** | Phase 1 built (tasks, priorities, briefings, backups) plus AI-assisted capture | [Design](docs/ARCHITECTURE.md), [plan](docs/PRODUCTIVITY_IMPLEMENTATION_PLAN.md) |
 | **Planning for local AI apps** (Chief of Staff, Organizer) | Planning documents | [Planning index](docs/README.md) |
 | **Shortcuts automation prototype** | Small working prototype | `api/`, `handlers/` |
 
@@ -26,6 +26,12 @@ change history; a transparent priority score with pins, up/down and snooze (see
 evening review, made on schedule or when you next open the app; JSON/CSV export;
 and a daily backup keeping the newest 14.
 
+**AI-assisted capture (M4):** type a note such as "Send Q3 report to Dana by
+Friday, about 2 hours" on Today and confirm an editable draft. Rules in the app
+read the due date, importance, effort and project; a small local model
+(qwen3:0.6b in Ollama) suggests a clean title. Nothing is saved until you
+confirm, and capture works the same with the model off or Ollama not running.
+
 Run it (Python 3.9 or later; verified on this Mac with Python 3.9.6):
 
 ```sh
@@ -36,7 +42,9 @@ python3 -m venv .venv
 
 Your data lives in `~/Library/Application Support/ProductivityAssistant`, outside
 this repository. Set `PA_DATA_DIR` to use another folder, or `PA_PORT` for another
-port. The app listens only on `127.0.0.1`.
+port. The app listens only on `127.0.0.1`. AI uses `qwen3:0.6b` from an
+already-running Ollama on this Mac if it is installed; set `PA_AI_MODEL=off` to
+turn AI off. The app never starts Ollama or downloads models.
 
 | Command | Does |
 | --- | --- |
@@ -60,8 +68,8 @@ Setup and run instructions will be added once they have been verified.
 
 ## Status
 
-Productivity Assistant Phase 1 (M0–M3) is implemented and tested; AI features,
-documents, integrations and cloud use are not built yet. The Chief of Staff and
+Productivity Assistant Phase 1 (M0–M3) and AI capture (M4) are implemented and
+tested; AI summaries, documents, integrations and cloud use are not built yet. The Chief of Staff and
 Organizer apps remain planning documents. Nothing in this repository stores
 personal data; keep databases, documents, logs and secrets outside it.
 

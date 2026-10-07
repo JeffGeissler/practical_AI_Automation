@@ -1,7 +1,7 @@
 # Productivity Assistant: implementation plan and token budget
 
 Status: **Phase 1 (M0–M3) implemented 2026-09-28** on branch `productivity-phase1`;
-M4–M10 are proposals. Implements the [design](ARCHITECTURE.md). **Token and turn
+**M4 implemented 2026-10-07** on branch `m4-capture`; M5–M10 are proposals. Implements the [design](ARCHITECTURE.md). **Token and turn
 figures in the budget table are estimates (targets), not measurements.**
 
 ## How this plan is meant to be used
@@ -79,7 +79,23 @@ local-model behavior on an 8 GB Mac (M4, M5).
 
 | # | Session date | Turns | Input tokens | Output tokens | vs. estimate | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
+| M4 | 2026-10-06 to 10-07 | about 30 (one session) | not reported by the tool | not reported by the tool | about 0.6× the 50-turn estimate | Includes the held-out and final evaluations; 110 tests pass |
 | M0–M3 | 2026-09-28 | about 30 (one session) | not reported by the tool | not reported by the tool | about 0.2× the 155-turn estimate | All four milestones in one session after context compaction; 54 tests pass |
+
+### M4 results (2026-10-07)
+
+| Done-when check | Evidence |
+| --- | --- |
+| Invalid, slow or missing model falls back to the manual form | `tests/test_capture.py`: malformed JSON, empty title, timeout, unavailable, digest change, busy and paused all give a rules-only draft; a 2-minute pause after a timeout avoids repeated waits |
+| Audit rows written | One `ai_calls` row per attempt (outcome, model, digest, token counts, duration, acceptance); no prompt or reply text |
+| Nothing saved without confirmation | Drafts never write tasks; a confirmed draft is saved by the normal create path with actor `ai_accepted` |
+
+Measured on synthetic notes (see [model evaluation](PRODUCTIVITY_MODEL_EVALUATION.md#m4-results-the-apps-capture-code-2026-10-07)):
+qwen3:0.6b met every pass target on a fresh 30-note check (90% of drafts fully
+correct, warm p95 0.32 s), and tied the rules alone. Changes from the original
+plan: code owns effort too (model guesses lowered accuracy), and the gateway
+pauses the model for 2 minutes after a timeout. Checks: `ruff check .` passes;
+`pytest -q` → 110 passed.
 
 ### Phase 1 results (2026-09-28)
 
@@ -130,6 +146,6 @@ tuned during M5.
 | Needed by | Decision |
 | --- | --- |
 | M0 | ~~Python version and where private data lives~~ Decided: Python 3.9+; `~/Library/Application Support/ProductivityAssistant` (override with `PA_DATA_DIR`) |
-| M5 | Local model, chosen from measured results on this Mac |
+| M5 | Local model, chosen from measured results on this Mac. **Decided 2026-09-29: qwen3:0.6b** (light and fast on this Mac; llama3.2 is the fallback); code resolves dates and importance. See [model evaluation](PRODUCTIVITY_MODEL_EVALUATION.md) |
 | M7 | Which integration first, and whether your employer allows importing its data |
 | M9 | Whether the cloud is allowed at all, and which provider |
